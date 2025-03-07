@@ -14,7 +14,7 @@ interface Project {
 const projects: Project[] = [
   {
     title: "Laravel Agency",
-    image: "https://laravelcompany.com/Logo.svg",
+    image: "https://raw.githubusercontent.com/laravelcompany/laravelcompany.com/refs/heads/main/public/Logo.svg",
     link: "https://github.com/laravelcompany",
     preview: "https://laravelcompany.com",
     status: "Founder",
@@ -22,7 +22,7 @@ const projects: Project[] = [
 
   {
     title: "Laravel Mail",
-    image: "https://laravelcompany.com/logo-laravel-mail.svg",
+    image: "https://laravelcompany.com/services/01.svg",
     link: "https://github.com/laravelcompany",
     preview: "https://laravelmail.com",
     status: "Creator",
@@ -35,7 +35,13 @@ const projects: Project[] = [
     preview: "https://publicsos.org",
     status: "Member",
   },
-
+  {
+    title: "Sherlock App",
+    image: "https://sherlock.izdrail.com/src/assets/logo2.svg",
+    link: "https://github.com/izdrail/sherlock.izdrail.com",
+    preview: "https://sherlock.izdrail.com",
+    status: "Creator",
+  },
   {
     title: "Php teacher",
     image: "https://raw.githubusercontent.com/izdrail/phpteacher.com/d4f7fc8acb4bf5172b5fa862133619c35d598aac/assets/logo.svg",
@@ -66,7 +72,9 @@ const projects: Project[] = [
             >
               <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-4">
                 <Image
-                inferSize={true}
+                  width={120}
+                  height={120}
+                  inferSize={false}
                   src={project.image}
                   alt={project.title}
                   class="w-full h-48 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"

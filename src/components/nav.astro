@@ -36,9 +36,10 @@ const navItems: NavItem[] = [
       >
         {
           navItems.map((item) => (
-            <li class="flex-1 md:flex-none">
+            <li title="laravel company founder" class="flex-1 md:flex-none">
               <a
                 href={item.href}
+                title={item.label}
                 class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base"
               >
                 <span class="md:hidden flex items-center justify-center w-6 h-6">

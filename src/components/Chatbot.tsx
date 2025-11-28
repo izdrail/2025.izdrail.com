@@ -482,6 +482,7 @@ function Chatbot() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result !== "string") return;
+      //@ts-ignore
       setComposerAttachments((prev) => [
         ...prev,
         {

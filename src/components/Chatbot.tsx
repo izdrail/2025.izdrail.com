@@ -320,6 +320,24 @@ const ModelSelector = ({
     </div>
 );
 
+// Safe Markdown content component
+const SafeMarkdownContent = ({ content, className = "" }: { content: any; className?: string }) => {
+  const safeContent = useMemo(() => {
+    if (typeof content === 'string') return content;
+    if (content == null) return '';
+    return String(content);
+  }, [content]);
+
+  return (
+      <MessageContent
+          markdown={true}
+          className={className}
+      >
+        {safeContent}
+      </MessageContent>
+  );
+};
+
 function Chatbot() {
   const [historyGroups, setHistoryGroups] = useState<HistoryGroup[]>(() =>
       cloneHistoryGroups(historySeed)
@@ -482,7 +500,6 @@ function Chatbot() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result !== "string") return;
-      //@ts-ignore
       setComposerAttachments((prev) => [
         ...prev,
         {
@@ -638,7 +655,9 @@ function Chatbot() {
           try {
             const parsed = JSON.parse(line);
             if (parsed.message?.content != null) {
-              assistantContent += parsed.message.content;
+              // Ensure content is always a string
+              const contentChunk = String(parsed.message.content);
+              assistantContent += contentChunk;
               updateConversationMessages(activeConversationId, (curr) =>
                   curr.map((msg) =>
                       msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
@@ -653,7 +672,8 @@ function Chatbot() {
         try {
           const parsed = JSON.parse(buffer.trim());
           if (parsed.message?.content != null) {
-            assistantContent += parsed.message.content;
+            const contentChunk = String(parsed.message.content);
+            assistantContent += contentChunk;
             updateConversationMessages(activeConversationId, (curr) =>
                 curr.map((msg) =>
                     msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
@@ -808,11 +828,11 @@ function Chatbot() {
      JSX
   ------------------------- */
   return (
-      <div className="relative flex h-full overflow-hidden bg-background text-foreground">
+      <div className=" flex mt-28 bg-background text-foreground dark:text-gray-100">
         {/* Sidebar overlay */}
         <div
             className={cn(
-                "fixed inset-0 z-20 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity duration-300",
+                "fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 dark:bg-black/70",
                 isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             )}
             onClick={() => setIsSidebarOpen(false)}
@@ -822,26 +842,26 @@ function Chatbot() {
         {/* Sidebar */}
         <aside
             className={cn(
-                "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out",
+                "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out  dark:border-gray-700",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full",
                 "lg:static lg:h-full lg:shadow-none",
                 isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0"
             )}
         >
           {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-4">
+          <div className="flex items-center justify-between border-b border-border px-4 py-4 ">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
                 History
               </p>
-              <p className="text-sm font-medium text-foreground">Recent chats</p>
+              <p className="text-sm font-medium text-foreground dark:text-gray-100">Recent chats</p>
             </div>
             <div className="flex items-center gap-1">
               <ThemeToggle className="lg:hidden" />
               <Button
                   variant="ghost"
                   size="icon"
-                  className="lg:hidden"
+                  className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                   onClick={() => setIsSidebarOpen(false)}
                   aria-label="Close chat history"
               >
@@ -851,8 +871,13 @@ function Chatbot() {
           </div>
 
           {/* New chat button */}
-          <div className="border-b border-border px-4 pb-4 pt-3">
-            <Button variant="outline" size="sm" className="w-full" onClick={handleNewChat}>
+          <div className="border-b border-border px-4 pb-4 pt-3 dark:border-gray-700">
+            <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-border bg-background hover:bg-accent dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100"
+                onClick={handleNewChat}
+            >
               <Plus className="h-4 w-4" />
               <span className="ml-2">New chat</span>
             </Button>
@@ -863,20 +888,20 @@ function Chatbot() {
             {isLoadingHistory ? (
                 <div className="flex items-center justify-center py-8">
                   <LoadingSpinner />
-                  <span className="ml-2 text-sm text-muted-foreground">Loading conversations...</span>
+                  <span className="ml-2 text-sm text-muted-foreground dark:text-gray-400">Loading conversations...</span>
                 </div>
             ) : historyGroups.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                  <div className="rounded-full bg-muted p-3 mb-3">
-                    <Bot className="h-6 w-6 text-muted-foreground" />
+                  <div className="rounded-full bg-muted p-3 mb-3 dark:bg-gray-700">
+                    <Bot className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
                   </div>
-                  <p className="text-sm font-medium text-foreground mb-1">No conversations yet</p>
-                  <p className="text-xs text-muted-foreground">Start a new chat to begin</p>
+                  <p className="text-sm font-medium text-foreground dark:text-gray-100 mb-1">No conversations yet</p>
+                  <p className="text-xs text-muted-foreground dark:text-gray-400">Start a new chat to begin</p>
                 </div>
             ) : (
                 historyGroups.map((section) => (
                     <div key={section.label} className="px-4 pt-6">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
                         {section.label}
                       </p>
                       <div className="mt-3 space-y-2">
@@ -887,18 +912,18 @@ function Chatbot() {
                                   key={conversation.id}
                                   type="button"
                                   className={cn(
-                                      "w-full rounded-xl border border-transparent bg-transparent px-3 py-2 text-left transition hover:border-border hover:bg-accent/40",
-                                      isActive && "border-border bg-accent/40"
+                                      "w-full rounded-xl border border-transparent bg-transparent px-3 py-2 text-left transition hover:border-border hover:bg-accent/40 dark:hover:border-gray-600 dark:hover:bg-gray-700/40",
+                                      isActive && "border-border bg-accent/40 dark:border-gray-600 dark:bg-gray-700/40"
                                   )}
                                   onClick={() => handleSelectConversation(conversation)}
                               >
-                                <div className="flex items-center justify-between text-sm font-medium text-foreground">
+                                <div className="flex items-center justify-between text-sm font-medium text-foreground dark:text-gray-100">
                                   <span className="truncate">{conversation.title}</span>
-                                  <span className="ml-2 shrink-0 text-xs text-muted-foreground">
+                                  <span className="ml-2 shrink-0 text-xs text-muted-foreground dark:text-gray-400">
                             {conversation.timestamp}
                           </span>
                                 </div>
-                                <p className="mt-1 text-xs text-muted-foreground">{conversation.preview}</p>
+                                <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">{conversation.preview}</p>
                               </button>
                           );
                         })}
@@ -912,13 +937,13 @@ function Chatbot() {
         {/* Main */}
         <main className="flex h-full flex-1 flex-col overflow-hidden">
           {/* Header */}
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-8">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-8 dark:border-gray-700">
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <div className="flex items-center gap-2">
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="lg:hidden"
+                    className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                     onClick={() => setIsSidebarOpen(true)}
                     aria-label="Open chat history"
                 >
@@ -927,7 +952,7 @@ function Chatbot() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="hidden lg:inline-flex"
+                    className="hidden lg:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                     onClick={() => setIsSidebarCollapsed((v) => !v)}
                     aria-label={isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
                 >
@@ -935,8 +960,8 @@ function Chatbot() {
                 </Button>
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">Ollama</p>
-                <h1 className="truncate text-lg font-semibold text-foreground sm:text-xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">Ollama</p>
+                <h1 className="truncate text-lg font-semibold text-foreground dark:text-gray-100 sm:text-xl">
                   {activeConversationTitle}
                 </h1>
                 <ModelSelector
@@ -955,27 +980,32 @@ function Chatbot() {
           {/* Chat area */}
           <div className="flex flex-1 flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-8">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              <ChatContainerRoot className="relative flex min-h-0 flex-1 flex-col rounded-2xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:p-6">
+              <ChatContainerRoot className="relative flex min-h-0 flex-1 flex-col rounded-2xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:p-6 dark:border-gray-700 dark:bg-gray-800/80">
                 {isLoadingHistory ? (
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <LoadingSpinner size={32} className="mx-auto mb-4" />
-                        <p className="text-sm text-muted-foreground">Loading conversation...</p>
+                        <p className="text-sm text-muted-foreground dark:text-gray-400">Loading conversation...</p>
                       </div>
                     </div>
                 ) : (
                     <ChatContainerContent className="flex w-full flex-col gap-6">
                       {messages.length === 0 ? (
                           <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                            <div className="rounded-full bg-primary/10 p-4 mb-4">
-                              <Bot className="h-8 w-8 text-primary" />
+                            <div className="rounded-full bg-primary/10 p-4 mb-4 dark:bg-primary/20">
+                              <Bot className="h-8 w-8 text-primary dark:text-primary-400" />
                             </div>
-                            <h3 className="text-lg font-semibold text-foreground mb-2">Welcome to Ollama Chat</h3>
-                            <p className="text-sm text-muted-foreground max-w-md mb-6">
+                            <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">Welcome to Ollama Chat</h3>
+                            <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
                               Start a conversation by typing a message below. I'm powered by your private AI endpoint.
                             </p>
                             <div className="flex flex-wrap gap-2 justify-center">
-                              <Button variant="outline" size="sm" onClick={handleNewChat}>
+                              <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={handleNewChat}
+                                  className="border-border dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
+                              >
                                 <Plus className="h-4 w-4 mr-2" />
                                 New Chat
                               </Button>
@@ -993,35 +1023,48 @@ function Chatbot() {
                                     <div className="flex items-center gap-2">
                                       <div className={cn(
                                           "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
-                                          isUser ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                                          isUser ? "bg-primary text-primary-foreground dark:bg-primary-600" : "bg-muted text-muted-foreground dark:bg-gray-700 dark:text-gray-300"
                                       )}>
                                         {isUser ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
                                       </div>
-                                      <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                                      <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
                                 {message.name}
                               </span>
-                                      <span className="text-xs text-muted-foreground/70">
+                                      <span className="text-xs text-muted-foreground/70 dark:text-gray-500">
                                 {formatMessageTime(message.timestamp)}
                               </span>
                                     </div>
                                     <div className="group flex w-full flex-col gap-2">
-                                      <MessageContent
-                                          markdown={message.markdown}
-                                          className={cn(
-                                              "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative",
-                                              isUser
-                                                  ? "bg-primary text-primary-foreground"
-                                                  : "bg-muted text-foreground prose-headings:mt-0 prose-headings:font-semibold prose-p:mt-2",
-                                              isStreaming && "pr-10"
-                                          )}
-                                      >
-                                        {message.content}
-                                        {isStreaming && (
-                                            <div className="absolute right-3 top-3">
-                                              <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-pulse" />
-                                            </div>
-                                        )}
-                                      </MessageContent>
+                                      {message.markdown ? (
+                                          <SafeMarkdownContent
+                                              content={message.content}
+                                              className={cn(
+                                                  "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative dark:prose-invert",
+                                                  isUser
+                                                      ? "bg-primary text-primary-foreground dark:bg-primary-600"
+                                                      : "bg-muted text-foreground prose-headings:mt-0 prose-headings:font-semibold prose-p:mt-2 dark:bg-gray-700 dark:text-gray-100",
+                                                  isStreaming && "pr-10"
+                                              )}
+                                          />
+                                      ) : (
+                                          <MessageContent
+                                              markdown={false}
+                                              className={cn(
+                                                  "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative",
+                                                  isUser
+                                                      ? "bg-primary text-primary-foreground dark:bg-primary-600"
+                                                      : "bg-muted text-foreground dark:bg-gray-700 dark:text-gray-100",
+                                                  isStreaming && "pr-10"
+                                              )}
+                                          >
+                                            {message.content}
+                                            {isStreaming && (
+                                                <div className="absolute right-3 top-3">
+                                                  <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-pulse dark:bg-gray-400" />
+                                                </div>
+                                            )}
+                                          </MessageContent>
+                                      )}
 
                                       {/* Attachments */}
                                       {message.attachments && message.attachments.length > 0 && (
@@ -1029,21 +1072,21 @@ function Chatbot() {
                                             {message.attachments.map((attachment) => (
                                                 <figure
                                                     key={attachment.id}
-                                                    className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment"
+                                                    className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment dark:border-gray-600 dark:bg-gray-700/40"
                                                 >
                                                   <img
                                                       src={attachment.preview}
                                                       alt={attachment.name}
                                                       className="h-32 w-full object-cover transition-transform group-hover/attachment:scale-105"
                                                   />
-                                                  <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground">
+                                                  <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground dark:text-gray-400">
                                                     <span className="truncate">{attachment.name}</span>
                                                     <div className="flex items-center gap-1">
                                                       <span className="shrink-0 pl-2">{formatFileSize(attachment.size)}</span>
                                                       <Button
                                                           variant="ghost"
                                                           size="icon"
-                                                          className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100"
+                                                          className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100 dark:text-gray-300 dark:hover:bg-gray-600"
                                                           onClick={() => window.open(attachment.preview, '_blank')}
                                                       >
                                                         <Download className="h-3 w-3" />
@@ -1067,7 +1110,10 @@ function Chatbot() {
                                               <Button
                                                   variant="ghost"
                                                   size="icon"
-                                                  className={cn("rounded-full", copiedMessageId === message.id && "bg-emerald-500/10 text-emerald-400")}
+                                                  className={cn(
+                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                                      copiedMessageId === message.id && "bg-emerald-500/10 text-emerald-400 dark:bg-emerald-500/20"
+                                                  )}
                                                   onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -1083,7 +1129,10 @@ function Chatbot() {
                                               <Button
                                                   variant="ghost"
                                                   size="icon"
-                                                  className={cn("rounded-full", message.reaction === "upvote" && "bg-primary/10 text-primary")}
+                                                  className={cn(
+                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                                      message.reaction === "upvote" && "bg-primary/10 text-primary dark:bg-primary/20"
+                                                  )}
                                                   onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -1100,7 +1149,10 @@ function Chatbot() {
                                               <Button
                                                   variant="ghost"
                                                   size="icon"
-                                                  className={cn("rounded-full", message.reaction === "downvote" && "bg-destructive/10 text-destructive")}
+                                                  className={cn(
+                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                                      message.reaction === "downvote" && "bg-destructive/10 text-destructive dark:bg-destructive/20"
+                                                  )}
                                                   onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -1126,10 +1178,10 @@ function Chatbot() {
                           <div className="flex justify-start">
                             <div className="flex max-w-[38rem] flex-col gap-2 items-start">
                               <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium">
+                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium dark:bg-gray-700 dark:text-gray-400">
                                   <Bot className="h-3 w-3" />
                                 </div>
-                                <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                                <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
                             Ollama
                           </span>
                               </div>
@@ -1143,7 +1195,7 @@ function Chatbot() {
                 )}
 
                 <div className="pointer-events-none absolute bottom-4 right-4">
-                  <ScrollButton className="pointer-events-auto shadow-md" />
+                  <ScrollButton className="pointer-events-auto shadow-md dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600" />
                 </div>
               </ChatContainerRoot>
             </div>
@@ -1154,25 +1206,25 @@ function Chatbot() {
                 onValueChange={setInput}
                 onSubmit={handleSubmit}
                 isLoading={isGenerating}
-                className="mt-6 mb-4 border-border/90 bg-card/80 backdrop-blur transition-all duration-200"
+                className="mt-6 mb-4 border-border/90 bg-card/80 backdrop-blur transition-all duration-200 dark:border-gray-600 dark:bg-gray-800/80"
                 disabled={isGenerating}
             >
               <div className="flex flex-col gap-3">
                 {composerAttachments.length > 0 && (
                     <div className="space-y-2 animate-in fade-in duration-200">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
                         Attachments ({composerAttachments.length})
                       </p>
                       <div className="flex flex-wrap gap-3">
                         {composerAttachments.map((attachment) => (
                             <div
                                 key={attachment.id}
-                                className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-muted/40 group/attachment animate-in slide-in-from-left-4 duration-300"
+                                className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-muted/40 group/attachment animate-in slide-in-from-left-4 duration-300 dark:border-gray-600 dark:bg-gray-700/40"
                             >
                               <img src={attachment.preview} alt={attachment.name} className="h-full w-full object-cover transition-transform group-hover/attachment:scale-110" />
                               <button
                                   type="button"
-                                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white transition-all hover:bg-destructive hover:scale-110"
+                                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white transition-all hover:bg-destructive hover:scale-110 dark:bg-gray-800/90"
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -1197,7 +1249,7 @@ function Chatbot() {
                       aria-label="Message"
                       placeholder="Message Ollama..."
                       onPaste={handlePasteImages}
-                      className="pr-12 min-h-[60px]"
+                      className="pr-12 min-h-[60px] dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-400"
                   />
                   {isGenerating && (
                       <div className="absolute right-3 top-3">
@@ -1209,7 +1261,7 @@ function Chatbot() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <PromptInputAction tooltip="Attach image" side="top">
-                      <Button asChild variant="ghost" size="icon" className="rounded-full">
+                      <Button asChild variant="ghost" size="icon" className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600">
                         <label className="flex cursor-pointer items-center justify-center transition-all hover:scale-105">
                           <Image className="h-5 w-5" />
                           <span className="sr-only">Attach image</span>
@@ -1223,7 +1275,7 @@ function Chatbot() {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="rounded-full"
+                          className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600"
                           onClick={() => setComposerAttachments([])}
                           disabled={composerAttachments.length === 0}
                       >
@@ -1240,7 +1292,7 @@ function Chatbot() {
                       <Button
                           type="button"
                           size="icon"
-                          className="rounded-full transition-all hover:scale-105"
+                          className="rounded-full transition-all hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary-600 dark:hover:bg-primary-700"
                           onClick={handleSubmit}
                           disabled={!hasPendingInput || isGenerating}
                       >

@@ -71,6 +71,7 @@ type ConversationMessage = {
   attachments?: Attachment[];
   reaction?: "upvote" | "downvote" | null;
   timestamp?: Date;
+  created_at?: string;
 };
 
 type HistoryConversation = {
@@ -85,7 +86,8 @@ type HistoryGroup = {
   conversations: HistoryConversation[];
 };
 
-const API_BASE = "https://ai.izdrail.com/api";
+// Use relative path for your worker
+const API_BASE = "/api";
 
 const historySeed: HistoryGroup[] = [
   {
@@ -172,7 +174,7 @@ function createPlaceholderConversation(
 }
 
 /* -------------------------
-   API helpers
+   API helpers - Updated for your Worker
 ------------------------- */
 
 async function apiGetConversations(): Promise<HistoryConversation[]> {
@@ -180,7 +182,7 @@ async function apiGetConversations(): Promise<HistoryConversation[]> {
     const res = await fetch(`${API_BASE}/conversations`);
     if (!res.ok) return [];
     const data = await res.json();
-    return Array.isArray(data) ? data : data.results ?? [];
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
@@ -199,10 +201,6 @@ async function apiCreateConversation(payload: {
       body: JSON.stringify(payload),
     });
     if (!res.ok) return null;
-    try {
-      const data = await res.json();
-      if (data && data.id) return data;
-    } catch {}
     return {
       id: payload.id,
       title: payload.title,
@@ -221,14 +219,20 @@ async function apiGetMessages(
     const res = await fetch(`${API_BASE}/messages/${conversationId}`);
     if (!res.ok) return [];
     const data = await res.json();
-    if (Array.isArray(data)) return data.map(msg => ({
-      ...msg,
-      timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
-    }));
-    if (data?.results) return data.results.map((msg: any) => ({
-      ...msg,
-      timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
-    }));
+    if (Array.isArray(data)) {
+      return data.map(msg => ({
+        id: msg.id,
+        role: msg.role as Role,
+        name: msg.name || (msg.role === 'user' ? 'You' : 'Ollama'),
+        avatarFallback: msg.avatarFallback || (msg.role === 'user' ? 'YO' : 'OL'),
+        content: msg.content || '',
+        markdown: msg.markdown ?? (msg.role === 'assistant'),
+        attachments: msg.attachments ? JSON.parse(msg.attachments) : undefined,
+        reaction: msg.reaction || null,
+        timestamp: msg.created_at ? new Date(msg.created_at) : new Date(),
+        created_at: msg.created_at
+      }));
+    }
     return [];
   } catch {
     return [];
@@ -251,7 +255,7 @@ async function apiCreateMessage(payload: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...payload,
-        timestamp: new Date().toISOString(),
+        attachments: payload.attachments ? JSON.stringify(payload.attachments) : null,
       }),
     });
     return res.ok;
@@ -353,7 +357,7 @@ function Chatbot() {
         markdown: true,
         reaction: null,
         content:
-            "Hello! I'm running on your private Ollama instance via **ai.izdrail.com**. Ask me anything!",
+            "Hello! I'm running on your private Ollama instance. Ask me anything!",
         timestamp: new Date(),
       },
     ];
@@ -391,7 +395,8 @@ function Chatbot() {
     const fetchModels = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch(`${API_BASE}/tags`);
+        // You might want to add a models endpoint to your worker
+        const res = await fetch(`https://ai.izdrail.com/api/tags`);
         if (!res.ok) throw new Error("Failed to fetch models");
         const data = await res.json();
         const modelList = (data.models || []).map((m: any) => ({
@@ -588,6 +593,7 @@ function Chatbot() {
     setCopiedMessageId(null);
     setIsGenerating(true);
 
+    // Save user message to your worker
     apiCreateMessage({
       id: userMessageId,
       conversation_id: activeConversationId,
@@ -605,7 +611,8 @@ function Chatbot() {
         .concat([{ role: "user", content: userContent }]);
 
     try {
-      const response = await fetch(`${API_BASE}/chat`, {
+      // Still use the external AI service for chat
+      const response = await fetch(`https://ai.izdrail.com/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -683,6 +690,7 @@ function Chatbot() {
         } catch {}
       }
 
+      // Save assistant message to your worker
       await apiCreateMessage({
         id: assistantMessageId,
         conversation_id: activeConversationId,
@@ -828,7 +836,7 @@ function Chatbot() {
      JSX
   ------------------------- */
   return (
-      <div className=" flex mt-28 bg-background text-foreground dark:text-gray-100">
+      <div className="relative flex h-full overflow-hidden bg-background text-foreground dark:bg-gray-900 dark:text-gray-100">
         {/* Sidebar overlay */}
         <div
             className={cn(
@@ -842,14 +850,14 @@ function Chatbot() {
         {/* Sidebar */}
         <aside
             className={cn(
-                "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out  dark:border-gray-700",
+                "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out dark:bg-gray-800 dark:border-gray-700",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full",
                 "lg:static lg:h-full lg:shadow-none",
                 isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0"
             )}
         >
           {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-4 ">
+          <div className="flex items-center justify-between border-b border-border px-4 py-4 dark:border-gray-700">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
                 History

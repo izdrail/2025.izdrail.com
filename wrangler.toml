@@ -1,0 +1,13 @@
+name = "my-astro-worker-app"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+
+# Serve Astro’s static output
+[site]
+bucket = "dist"
+
+# Bind the D1 database
+[[d1_databases]]
+binding = "DB"
+database_name = "chats"
+database_id = "2150eff8-e9a7-4986-b790-a731438b7a2a"

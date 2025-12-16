@@ -14,6 +14,20 @@ export default defineConfig({
   }),
   integrations: [tailwind(), react()],
   vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          banner: `if (typeof MessageChannel === 'undefined') {
+            globalThis.MessageChannel = class MessageChannel {
+              constructor() {
+                this.port1 = { onmessage: null, postMessage: (msg) => { setTimeout(() => this.port2.onmessage?.({ data: msg }), 0); } };
+                this.port2 = { onmessage: null, postMessage: (msg) => { setTimeout(() => this.port1.onmessage?.({ data: msg }), 0); } };
+              }
+            };
+          }`,
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': '/src',

@@ -12,7 +12,10 @@ CREATE TABLE messages (
                           id TEXT PRIMARY KEY,
                           conversation_id TEXT NOT NULL,
                           role TEXT NOT NULL,
+                          name TEXT,
+                          avatarFallback TEXT,
                           content TEXT NOT NULL,
+                          markdown INTEGER DEFAULT 0,
                           attachments TEXT,
                           created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                           FOREIGN KEY (conversation_id) REFERENCES conversations(id)

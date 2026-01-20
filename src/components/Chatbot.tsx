@@ -119,12 +119,12 @@ function truncateText(text: string, limit = 80): string {
 }
 
 function findConversationTitle(
-    groups: HistoryGroup[],
-    conversationId: string
+  groups: HistoryGroup[],
+  conversationId: string
 ): string {
   for (const section of groups) {
     const conversation = section.conversations.find(
-        (entry) => entry.id === conversationId
+      (entry) => entry.id === conversationId
     );
     if (conversation) return conversation.title;
   }
@@ -139,9 +139,9 @@ function cloneHistoryGroups(groups: HistoryGroup[]): HistoryGroup[] {
 }
 
 function updateConversationInGroups(
-    groups: HistoryGroup[],
-    conversationId: string,
-    updater: (existing: HistoryConversation) => HistoryConversation
+  groups: HistoryGroup[],
+  conversationId: string,
+  updater: (existing: HistoryConversation) => HistoryConversation
 ): HistoryGroup[] {
   const next = cloneHistoryGroups(groups);
   for (const section of next) {
@@ -156,8 +156,8 @@ function updateConversationInGroups(
 }
 
 function createPlaceholderConversation(
-    title: string,
-    preview: string
+  title: string,
+  preview: string
 ): ConversationMessage[] {
   return [
     {
@@ -213,7 +213,7 @@ async function apiCreateConversation(payload: {
 }
 
 async function apiGetMessages(
-    conversationId: string
+  conversationId: string
 ): Promise<ConversationMessage[]> {
   try {
     const res = await fetch(`${API_BASE}/messages/${conversationId}`);
@@ -272,56 +272,56 @@ const seedActiveConversationId = historySeed[0]?.conversations[0]?.id ?? createI
 
 // Loading spinner component
 const LoadingSpinner = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
-    <Loader2 className={cn("animate-spin", className)} size={size} />
+  <Loader2 className={cn("animate-spin", className)} size={size} />
 );
 
 // Typing indicator component
 const TypingIndicator = () => (
-    <div className="flex items-center space-x-1 px-4 py-2">
-      <div className="flex space-x-1">
-        <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
-        <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
-        <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
-      </div>
-      <span className="text-xs text-muted-foreground">AI is thinking...</span>
+  <div className="flex items-center space-x-1 px-4 py-2">
+    <div className="flex space-x-1">
+      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
     </div>
+    <span className="text-xs text-muted-foreground">AI is thinking...</span>
+  </div>
 );
 
 // Model selector component
 const ModelSelector = ({
-                         models,
-                         selectedModel,
-                         onModelChange,
-                         isLoading = false
-                       }: {
+  models,
+  selectedModel,
+  onModelChange,
+  isLoading = false
+}: {
   models: { id: string; name: string }[];
   selectedModel: string;
   onModelChange: (model: string) => void;
   isLoading?: boolean;
 }) => (
-    <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-muted/50">
-      {isLoading ? (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <LoadingSpinner size={12} />
-            Loading models...
-          </div>
-      ) : (
-          <>
-            <Cpu className="h-3 w-3 text-muted-foreground" />
-            <select
-                value={selectedModel}
-                onChange={(e) => onModelChange(e.target.value)}
-                className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-muted-foreground"
-            >
-              {models.map((model) => (
-                  <option key={model.id} value={model.id}>
-                    {model.name}
-                  </option>
-              ))}
-            </select>
-          </>
-      )}
-    </div>
+  <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-muted/50">
+    {isLoading ? (
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <LoadingSpinner size={12} />
+        Loading models...
+      </div>
+    ) : (
+      <>
+        <Cpu className="h-3 w-3 text-muted-foreground" />
+        <select
+          value={selectedModel}
+          onChange={(e) => onModelChange(e.target.value)}
+          className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-muted-foreground"
+        >
+          {models.map((model) => (
+            <option key={model.id} value={model.id}>
+              {model.name}
+            </option>
+          ))}
+        </select>
+      </>
+    )}
+  </div>
 );
 
 // Safe Markdown content component
@@ -333,18 +333,18 @@ const SafeMarkdownContent = ({ content, className = "" }: { content: any; classN
   }, [content]);
 
   return (
-      <MessageContent
-          markdown={true}
-          className={className}
-      >
-        {safeContent}
-      </MessageContent>
+    <MessageContent
+      markdown={true}
+      className={className}
+    >
+      {safeContent}
+    </MessageContent>
   );
 };
 
 function Chatbot() {
   const [historyGroups, setHistoryGroups] = useState<HistoryGroup[]>(() =>
-      cloneHistoryGroups(historySeed)
+    cloneHistoryGroups(historySeed)
   );
   const [conversations, setConversations] = useState<Record<string, ConversationMessage[]>>(() => {
     const map: Record<string, ConversationMessage[]> = {};
@@ -357,7 +357,7 @@ function Chatbot() {
         markdown: true,
         reaction: null,
         content:
-            "Hello! I'm running on your private Ollama instance. Ask me anything!",
+          "Hello! I'm running on your private Ollama instance. Ask me anything!",
         timestamp: new Date(),
       },
     ];
@@ -382,8 +382,8 @@ function Chatbot() {
   }, [historyGroups, activeConversationId]);
 
   const messages = useMemo(
-      () => conversations[activeConversationId] ?? [],
-      [conversations, activeConversationId]
+    () => conversations[activeConversationId] ?? [],
+    [conversations, activeConversationId]
   );
 
   const hasPendingInput = input.trim().length > 0 || composerAttachments.length > 0;
@@ -477,8 +477,8 @@ function Chatbot() {
      Update conversation messages
   ------------------------- */
   const updateConversationMessages = (
-      conversationId: string,
-      updater: (current: ConversationMessage[]) => ConversationMessage[]
+    conversationId: string,
+    updater: (current: ConversationMessage[]) => ConversationMessage[]
   ) => {
     setConversations((prev) => {
       const current = prev[conversationId] ?? [];
@@ -489,12 +489,12 @@ function Chatbot() {
 
   const refreshHistoryPreview = (conversationId: string, preview: string, title?: string) => {
     setHistoryGroups((prev) =>
-        updateConversationInGroups(prev, conversationId, (existing) => ({
-          id: existing.id,
-          title: title ?? existing.title,
-          preview: truncateText(preview),
-          timestamp: "Just now",
-        }))
+      updateConversationInGroups(prev, conversationId, (existing) => ({
+        id: existing.id,
+        title: title ?? existing.title,
+        preview: truncateText(preview),
+        timestamp: "Just now",
+      }))
     );
   };
 
@@ -521,7 +521,7 @@ function Chatbot() {
 
   const handlePasteImages = (event: ClipboardEvent<HTMLTextAreaElement>) => {
     const files = Array.from(event.clipboardData?.files ?? []).filter((file) =>
-        file.type.startsWith("image/")
+      file.type.startsWith("image/")
     );
     if (files.length === 0) return;
     event.preventDefault();
@@ -530,7 +530,7 @@ function Chatbot() {
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []).filter((file) =>
-        file.type.startsWith("image/")
+      file.type.startsWith("image/")
     );
     if (files.length === 0) return;
     files.forEach(addAttachmentFromFile);
@@ -539,7 +539,7 @@ function Chatbot() {
 
   const handleRemoveAttachment = (attachmentId: string) => {
     setComposerAttachments((prev) =>
-        prev.filter((attachment) => attachment.id !== attachmentId)
+      prev.filter((attachment) => attachment.id !== attachmentId)
     );
   };
 
@@ -558,11 +558,11 @@ function Chatbot() {
 
   const toggleReaction = (messageId: string, reaction: "upvote" | "downvote") => {
     updateConversationMessages(activeConversationId, (current) =>
-        current.map((msg) =>
-            msg.id === messageId
-                ? { ...msg, reaction: msg.reaction === reaction ? null : reaction }
-                : msg
-        )
+      current.map((msg) =>
+        msg.id === messageId
+          ? { ...msg, reaction: msg.reaction === reaction ? null : reaction }
+          : msg
+      )
     );
   };
 
@@ -606,9 +606,9 @@ function Chatbot() {
     }).catch(console.warn);
 
     const chatHistory = messages
-        .filter((msg) => msg.role === "user" || msg.role === "assistant")
-        .map((msg) => ({ role: msg.role, content: msg.content }))
-        .concat([{ role: "user", content: userContent }]);
+      .filter((msg) => msg.role === "user" || msg.role === "assistant")
+      .map((msg) => ({ role: msg.role, content: msg.content }))
+      .concat([{ role: "user", content: userContent }]);
 
     try {
       // Still use the external AI service for chat
@@ -666,12 +666,12 @@ function Chatbot() {
               const contentChunk = String(parsed.message.content);
               assistantContent += contentChunk;
               updateConversationMessages(activeConversationId, (curr) =>
-                  curr.map((msg) =>
-                      msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
-                  )
+                curr.map((msg) =>
+                  msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
+                )
               );
             }
-          } catch {}
+          } catch { }
         }
       }
 
@@ -682,12 +682,12 @@ function Chatbot() {
             const contentChunk = String(parsed.message.content);
             assistantContent += contentChunk;
             updateConversationMessages(activeConversationId, (curr) =>
-                curr.map((msg) =>
-                    msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
-                )
+              curr.map((msg) =>
+                msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
+              )
             );
           }
-        } catch {}
+        } catch { }
       }
 
       // Save assistant message to your worker
@@ -724,7 +724,7 @@ function Chatbot() {
         content: errorMessage.content,
         markdown: false,
         attachments: null,
-      }).catch(() => {});
+      }).catch(() => { });
     } finally {
       setIsGenerating(false);
       setStreamingMessageId(null);
@@ -789,7 +789,7 @@ function Chatbot() {
       content: initialAssistant.content,
       markdown: true,
       attachments: null,
-    }).catch(() => {});
+    }).catch(() => { });
   };
 
   /* -------------------------
@@ -836,484 +836,484 @@ function Chatbot() {
      JSX
   ------------------------- */
   return (
-      <div className="relative flex h-full overflow-hidden bg-background text-foreground dark:bg-gray-900 dark:text-gray-100">
-        {/* Sidebar overlay */}
-        <div
-            className={cn(
-                "fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 dark:bg-black/70",
-                isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-            )}
-            onClick={() => setIsSidebarOpen(false)}
-            aria-hidden="true"
-        />
+    <div className="chat-container relative flex h-full overflow-hidden">
+      {/* Sidebar overlay */}
+      <div
+        className={cn(
+          "fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 dark:bg-black/70",
+          isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setIsSidebarOpen(false)}
+        aria-hidden="true"
+      />
 
-        {/* Sidebar */}
-        <aside
-            className={cn(
-                "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out dark:bg-gray-800 dark:border-gray-700",
-                isSidebarOpen ? "translate-x-0" : "-translate-x-full",
-                "lg:static lg:h-full lg:shadow-none",
-                isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0"
-            )}
-        >
-          {/* Sidebar header */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-4 dark:border-gray-700">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
-                History
-              </p>
-              <p className="text-sm font-medium text-foreground dark:text-gray-100">Recent chats</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <ThemeToggle className="lg:hidden" />
-              <Button
-                  variant="ghost"
-                  size="icon"
-                  className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                  onClick={() => setIsSidebarOpen(false)}
-                  aria-label="Close chat history"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "chat-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col shadow-xl transition-transform duration-300 ease-in-out",
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+          "lg:static lg:h-full lg:shadow-none",
+          isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0"
+        )}
+      >
+        {/* Sidebar header */}
+        <div className="chat-sidebar-header flex items-center justify-between px-4 py-4">
+          <div>
+            <p className="chat-label">
+              History
+            </p>
+            <p className="chat-title text-sm">Recent chats</p>
           </div>
-
-          {/* New chat button */}
-          <div className="border-b border-border px-4 pb-4 pt-3 dark:border-gray-700">
+          <div className="flex items-center gap-1">
+            <ThemeToggle className="lg:hidden" />
             <Button
-                variant="outline"
-                size="sm"
-                className="w-full border-border bg-background hover:bg-accent dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100"
-                onClick={handleNewChat}
+              variant="ghost"
+              size="icon"
+              className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close chat history"
             >
-              <Plus className="h-4 w-4" />
-              <span className="ml-2">New chat</span>
+              <X className="h-4 w-4" />
             </Button>
           </div>
+        </div>
 
-          {/* Conversation list */}
-          <div className="flex-1 overflow-y-auto pb-6">
-            {isLoadingHistory ? (
-                <div className="flex items-center justify-center py-8">
-                  <LoadingSpinner />
-                  <span className="ml-2 text-sm text-muted-foreground dark:text-gray-400">Loading conversations...</span>
-                </div>
-            ) : historyGroups.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                  <div className="rounded-full bg-muted p-3 mb-3 dark:bg-gray-700">
-                    <Bot className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground dark:text-gray-100 mb-1">No conversations yet</p>
-                  <p className="text-xs text-muted-foreground dark:text-gray-400">Start a new chat to begin</p>
-                </div>
-            ) : (
-                historyGroups.map((section) => (
-                    <div key={section.label} className="px-4 pt-6">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
-                        {section.label}
-                      </p>
-                      <div className="mt-3 space-y-2">
-                        {section.conversations.map((conversation) => {
-                          const isActive = conversation.id === activeConversationId;
-                          return (
-                              <button
-                                  key={conversation.id}
-                                  type="button"
-                                  className={cn(
-                                      "w-full rounded-xl border border-transparent bg-transparent px-3 py-2 text-left transition hover:border-border hover:bg-accent/40 dark:hover:border-gray-600 dark:hover:bg-gray-700/40",
-                                      isActive && "border-border bg-accent/40 dark:border-gray-600 dark:bg-gray-700/40"
-                                  )}
-                                  onClick={() => handleSelectConversation(conversation)}
-                              >
-                                <div className="flex items-center justify-between text-sm font-medium text-foreground dark:text-gray-100">
-                                  <span className="truncate">{conversation.title}</span>
-                                  <span className="ml-2 shrink-0 text-xs text-muted-foreground dark:text-gray-400">
+        {/* New chat button */}
+        <div className="border-b border-border px-4 pb-4 pt-3 dark:border-gray-700">
+          <Button
+            variant="outline"
+            size="sm"
+            className="chat-button-ghost w-full"
+            onClick={handleNewChat}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="ml-2">New chat</span>
+          </Button>
+        </div>
+
+        {/* Conversation list */}
+        <div className="flex-1 overflow-y-auto pb-6">
+          {isLoadingHistory ? (
+            <div className="flex items-center justify-center py-8">
+              <LoadingSpinner />
+              <span className="ml-2 text-sm text-muted-foreground dark:text-gray-400">Loading conversations...</span>
+            </div>
+          ) : historyGroups.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center px-4">
+              <div className="rounded-full bg-muted p-3 mb-3 dark:bg-gray-700">
+                <Bot className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
+              </div>
+              <p className="text-sm font-medium text-foreground dark:text-gray-100 mb-1">No conversations yet</p>
+              <p className="text-xs text-muted-foreground dark:text-gray-400">Start a new chat to begin</p>
+            </div>
+          ) : (
+            historyGroups.map((section) => (
+              <div key={section.label} className="px-4 pt-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
+                  {section.label}
+                </p>
+                <div className="mt-3 space-y-2">
+                  {section.conversations.map((conversation) => {
+                    const isActive = conversation.id === activeConversationId;
+                    return (
+                      <button
+                        key={conversation.id}
+                        type="button"
+                        className={cn(
+                          "chat-conversation-item w-full px-3 py-2 text-left",
+                          isActive && "active"
+                        )}
+                        onClick={() => handleSelectConversation(conversation)}
+                      >
+                        <div className="flex items-center justify-between text-sm font-medium text-foreground dark:text-gray-100">
+                          <span className="truncate">{conversation.title}</span>
+                          <span className="ml-2 shrink-0 text-xs text-muted-foreground dark:text-gray-400">
                             {conversation.timestamp}
                           </span>
-                                </div>
-                                <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">{conversation.preview}</p>
-                              </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                ))
-            )}
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">{conversation.preview}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="flex h-full flex-1 flex-col overflow-hidden">
+        {/* Header */}
+        <header className="chat-header flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-8">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open chat history"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden lg:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={() => setIsSidebarCollapsed((v) => !v)}
+                aria-label={isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+              >
+                {isSidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+              </Button>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">Ollama</p>
+              <h1 className="truncate text-lg font-semibold text-foreground dark:text-gray-100 sm:text-xl">
+                {activeConversationTitle}
+              </h1>
+              <ModelSelector
+                models={models}
+                selectedModel={selectedModel}
+                onModelChange={setSelectedModel}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
-        </aside>
+          <div className="flex flex-wrap items-center gap-2">
+            <ThemeToggle className="hidden lg:inline-flex" />
+          </div>
+        </header>
 
-        {/* Main */}
-        <main className="flex h-full flex-1 flex-col overflow-hidden">
-          {/* Header */}
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-8 dark:border-gray-700">
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    onClick={() => setIsSidebarOpen(true)}
-                    aria-label="Open chat history"
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden lg:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    onClick={() => setIsSidebarCollapsed((v) => !v)}
-                    aria-label={isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
-                >
-                  {isSidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-                </Button>
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">Ollama</p>
-                <h1 className="truncate text-lg font-semibold text-foreground dark:text-gray-100 sm:text-xl">
-                  {activeConversationTitle}
-                </h1>
-                <ModelSelector
-                    models={models}
-                    selectedModel={selectedModel}
-                    onModelChange={setSelectedModel}
-                    isLoading={isLoading}
-                />
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <ThemeToggle className="hidden lg:inline-flex" />
-            </div>
-          </header>
-
-          {/* Chat area */}
-          <div className="flex flex-1 flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-8">
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              <ChatContainerRoot className="relative flex min-h-0 flex-1 flex-col rounded-2xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:p-6 dark:border-gray-700 dark:bg-gray-800/80">
-                {isLoadingHistory ? (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center">
-                        <LoadingSpinner size={32} className="mx-auto mb-4" />
-                        <p className="text-sm text-muted-foreground dark:text-gray-400">Loading conversation...</p>
+        {/* Chat area */}
+        <div className="flex flex-1 flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-8">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <ChatContainerRoot className="chat-messages-container relative flex min-h-0 flex-1 flex-col p-4 shadow-sm sm:p-6">
+              {isLoadingHistory ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <LoadingSpinner size={32} className="mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">Loading conversation...</p>
+                  </div>
+                </div>
+              ) : (
+                <ChatContainerContent className="flex w-full flex-col gap-6">
+                  {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                      <div className="rounded-full bg-primary/10 p-4 mb-4 dark:bg-primary/20">
+                        <Bot className="h-8 w-8 text-primary dark:text-primary-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">Welcome to Ollama Chat</h3>
+                      <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
+                        Start a conversation by typing a message below. I'm powered by your private AI endpoint.
+                      </p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleNewChat}
+                          className="border-border dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          New Chat
+                        </Button>
                       </div>
                     </div>
-                ) : (
-                    <ChatContainerContent className="flex w-full flex-col gap-6">
-                      {messages.length === 0 ? (
-                          <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                            <div className="rounded-full bg-primary/10 p-4 mb-4 dark:bg-primary/20">
-                              <Bot className="h-8 w-8 text-primary dark:text-primary-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">Welcome to Ollama Chat</h3>
-                            <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
-                              Start a conversation by typing a message below. I'm powered by your private AI endpoint.
-                            </p>
-                            <div className="flex flex-wrap gap-2 justify-center">
-                              <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={handleNewChat}
-                                  className="border-border dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <Plus className="h-4 w-4 mr-2" />
-                                New Chat
-                              </Button>
-                            </div>
-                          </div>
-                      ) : (
-                          messages.map((message, index) => {
-                            const isUser = message.role === "user";
-                            const isLatestAssistant = !isUser && index === messages.length - 1;
-                            const isStreaming = message.id === streamingMessageId;
+                  ) : (
+                    messages.map((message, index) => {
+                      const isUser = message.role === "user";
+                      const isLatestAssistant = !isUser && index === messages.length - 1;
+                      const isStreaming = message.id === streamingMessageId;
 
-                            return (
-                                <Message key={message.id} className={cn(isUser ? "justify-end" : "justify-start")} aria-live="polite">
-                                  <div className={cn("flex max-w-[38rem] flex-col gap-2", isUser ? "items-end" : "items-start")}>
-                                    <div className="flex items-center gap-2">
-                                      <div className={cn(
-                                          "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
-                                          isUser ? "bg-primary text-primary-foreground dark:bg-primary-600" : "bg-muted text-muted-foreground dark:bg-gray-700 dark:text-gray-300"
-                                      )}>
-                                        {isUser ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
-                                      </div>
-                                      <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
+                      return (
+                        <Message key={message.id} className={cn(isUser ? "justify-end" : "justify-start")} aria-live="polite">
+                          <div className={cn("flex max-w-[38rem] flex-col gap-2", isUser ? "items-end" : "items-start")}>
+                            <div className="flex items-center gap-2">
+                              <div className={cn(
+                                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
+                                isUser ? "bg-gradient-to-br from-[#a476ff] to-[#8a5fd6] text-white" : "bg-[var(--chat-card-bg)] text-[var(--chat-white-icon)] border border-[var(--chat-border)]"
+                              )}>
+                                {isUser ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
+                              </div>
+                              <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
                                 {message.name}
                               </span>
-                                      <span className="text-xs text-muted-foreground/70 dark:text-gray-500">
+                              <span className="text-xs text-muted-foreground/70 dark:text-gray-500">
                                 {formatMessageTime(message.timestamp)}
                               </span>
+                            </div>
+                            <div className="group flex w-full flex-col gap-2">
+                              {message.markdown ? (
+                                <SafeMarkdownContent
+                                  content={message.content}
+                                  className={cn(
+                                    "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative",
+                                    isUser
+                                      ? "message-user"
+                                      : "message-assistant prose-headings:mt-0 prose-headings:font-semibold prose-p:mt-2",
+                                    isStreaming && "pr-10"
+                                  )}
+                                />
+                              ) : (
+                                <MessageContent
+                                  markdown={false}
+                                  className={cn(
+                                    "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative",
+                                    isUser
+                                      ? "message-user"
+                                      : "message-assistant",
+                                    isStreaming && "pr-10"
+                                  )}
+                                >
+                                  {message.content}
+                                  {isStreaming && (
+                                    <div className="absolute right-3 top-3">
+                                      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-pulse dark:bg-gray-400" />
                                     </div>
-                                    <div className="group flex w-full flex-col gap-2">
-                                      {message.markdown ? (
-                                          <SafeMarkdownContent
-                                              content={message.content}
-                                              className={cn(
-                                                  "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative dark:prose-invert",
-                                                  isUser
-                                                      ? "bg-primary text-primary-foreground dark:bg-primary-600"
-                                                      : "bg-muted text-foreground prose-headings:mt-0 prose-headings:font-semibold prose-p:mt-2 dark:bg-gray-700 dark:text-gray-100",
-                                                  isStreaming && "pr-10"
-                                              )}
-                                          />
-                                      ) : (
-                                          <MessageContent
-                                              markdown={false}
-                                              className={cn(
-                                                  "rounded-3xl px-5 py-3 text-sm leading-6 shadow-sm transition-colors text-left relative",
-                                                  isUser
-                                                      ? "bg-primary text-primary-foreground dark:bg-primary-600"
-                                                      : "bg-muted text-foreground dark:bg-gray-700 dark:text-gray-100",
-                                                  isStreaming && "pr-10"
-                                              )}
+                                  )}
+                                </MessageContent>
+                              )}
+
+                              {/* Attachments */}
+                              {message.attachments && message.attachments.length > 0 && (
+                                <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                                  {message.attachments.map((attachment) => (
+                                    <figure
+                                      key={attachment.id}
+                                      className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment dark:border-gray-600 dark:bg-gray-700/40"
+                                    >
+                                      <img
+                                        src={attachment.preview}
+                                        alt={attachment.name}
+                                        className="h-32 w-full object-cover transition-transform group-hover/attachment:scale-105"
+                                      />
+                                      <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground dark:text-gray-400">
+                                        <span className="truncate">{attachment.name}</span>
+                                        <div className="flex items-center gap-1">
+                                          <span className="shrink-0 pl-2">{formatFileSize(attachment.size)}</span>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100 dark:text-gray-300 dark:hover:bg-gray-600"
+                                            onClick={() => window.open(attachment.preview, '_blank')}
                                           >
-                                            {message.content}
-                                            {isStreaming && (
-                                                <div className="absolute right-3 top-3">
-                                                  <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-pulse dark:bg-gray-400" />
-                                                </div>
-                                            )}
-                                          </MessageContent>
-                                      )}
-
-                                      {/* Attachments */}
-                                      {message.attachments && message.attachments.length > 0 && (
-                                          <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                                            {message.attachments.map((attachment) => (
-                                                <figure
-                                                    key={attachment.id}
-                                                    className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment dark:border-gray-600 dark:bg-gray-700/40"
-                                                >
-                                                  <img
-                                                      src={attachment.preview}
-                                                      alt={attachment.name}
-                                                      className="h-32 w-full object-cover transition-transform group-hover/attachment:scale-105"
-                                                  />
-                                                  <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground dark:text-gray-400">
-                                                    <span className="truncate">{attachment.name}</span>
-                                                    <div className="flex items-center gap-1">
-                                                      <span className="shrink-0 pl-2">{formatFileSize(attachment.size)}</span>
-                                                      <Button
-                                                          variant="ghost"
-                                                          size="icon"
-                                                          className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100 dark:text-gray-300 dark:hover:bg-gray-600"
-                                                          onClick={() => window.open(attachment.preview, '_blank')}
-                                                      >
-                                                        <Download className="h-3 w-3" />
-                                                      </Button>
-                                                    </div>
-                                                  </figcaption>
-                                                </figure>
-                                            ))}
-                                          </div>
-                                      )}
-
-                                      {/* Actions for assistant */}
-                                      {!isUser && (
-                                          <MessageActions
-                                              className={cn(
-                                                  "-ml-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
-                                                  (isLatestAssistant || isStreaming) && "opacity-100"
-                                              )}
-                                          >
-                                            <MessageAction tooltip={copiedMessageId === message.id ? "Copied" : "Copy message"} delayDuration={100}>
-                                              <Button
-                                                  variant="ghost"
-                                                  size="icon"
-                                                  className={cn(
-                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                                      copiedMessageId === message.id && "bg-emerald-500/10 text-emerald-400 dark:bg-emerald-500/20"
-                                                  )}
-                                                  onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    handleCopy(message);
-                                                  }}
-                                                  aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message"}
-                                              >
-                                                {copiedMessageId === message.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                                              </Button>
-                                            </MessageAction>
-
-                                            <MessageAction tooltip={message.reaction === "upvote" ? "Remove like" : "Mark response as helpful"} delayDuration={100}>
-                                              <Button
-                                                  variant="ghost"
-                                                  size="icon"
-                                                  className={cn(
-                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                                      message.reaction === "upvote" && "bg-primary/10 text-primary dark:bg-primary/20"
-                                                  )}
-                                                  onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    toggleReaction(message.id, "upvote");
-                                                  }}
-                                                  aria-pressed={message.reaction === "upvote"}
-                                                  aria-label="Mark response as helpful"
-                                              >
-                                                <ThumbsUp className="h-4 w-4" />
-                                              </Button>
-                                            </MessageAction>
-
-                                            <MessageAction tooltip={message.reaction === "downvote" ? "Remove dislike" : "Mark response as not helpful"} delayDuration={100}>
-                                              <Button
-                                                  variant="ghost"
-                                                  size="icon"
-                                                  className={cn(
-                                                      "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                                      message.reaction === "downvote" && "bg-destructive/10 text-destructive dark:bg-destructive/20"
-                                                  )}
-                                                  onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    toggleReaction(message.id, "downvote");
-                                                  }}
-                                                  aria-pressed={message.reaction === "downvote"}
-                                                  aria-label="Mark response as not helpful"
-                                              >
-                                                <ThumbsDown className="h-4 w-4" />
-                                              </Button>
-                                            </MessageAction>
-                                          </MessageActions>
-                                      )}
-                                    </div>
-                                  </div>
-                                </Message>
-                            );
-                          })
-                      )}
-
-                      {/* Typing indicator */}
-                      {isGenerating && streamingMessageId === null && (
-                          <div className="flex justify-start">
-                            <div className="flex max-w-[38rem] flex-col gap-2 items-start">
-                              <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium dark:bg-gray-700 dark:text-gray-400">
-                                  <Bot className="h-3 w-3" />
+                                            <Download className="h-3 w-3" />
+                                          </Button>
+                                        </div>
+                                      </figcaption>
+                                    </figure>
+                                  ))}
                                 </div>
-                                <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
-                            Ollama
-                          </span>
-                              </div>
-                              <TypingIndicator />
+                              )}
+
+                              {/* Actions for assistant */}
+                              {!isUser && (
+                                <MessageActions
+                                  className={cn(
+                                    "-ml-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
+                                    (isLatestAssistant || isStreaming) && "opacity-100"
+                                  )}
+                                >
+                                  <MessageAction tooltip={copiedMessageId === message.id ? "Copied" : "Copy message"} delayDuration={100}>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                        "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                        copiedMessageId === message.id && "bg-emerald-500/10 text-emerald-400 dark:bg-emerald-500/20"
+                                      )}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleCopy(message);
+                                      }}
+                                      aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message"}
+                                    >
+                                      {copiedMessageId === message.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                    </Button>
+                                  </MessageAction>
+
+                                  <MessageAction tooltip={message.reaction === "upvote" ? "Remove like" : "Mark response as helpful"} delayDuration={100}>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                        "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                        message.reaction === "upvote" && "bg-primary/10 text-primary dark:bg-primary/20"
+                                      )}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        toggleReaction(message.id, "upvote");
+                                      }}
+                                      aria-pressed={message.reaction === "upvote"}
+                                      aria-label="Mark response as helpful"
+                                    >
+                                      <ThumbsUp className="h-4 w-4" />
+                                    </Button>
+                                  </MessageAction>
+
+                                  <MessageAction tooltip={message.reaction === "downvote" ? "Remove dislike" : "Mark response as not helpful"} delayDuration={100}>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                        "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                        message.reaction === "downvote" && "bg-destructive/10 text-destructive dark:bg-destructive/20"
+                                      )}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        toggleReaction(message.id, "downvote");
+                                      }}
+                                      aria-pressed={message.reaction === "downvote"}
+                                      aria-label="Mark response as not helpful"
+                                    >
+                                      <ThumbsDown className="h-4 w-4" />
+                                    </Button>
+                                  </MessageAction>
+                                </MessageActions>
+                              )}
                             </div>
                           </div>
-                      )}
+                        </Message>
+                      );
+                    })
+                  )}
 
-                      <ChatContainerScrollAnchor />
-                    </ChatContainerContent>
-                )}
-
-                <div className="pointer-events-none absolute bottom-4 right-4">
-                  <ScrollButton className="pointer-events-auto shadow-md dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600" />
-                </div>
-              </ChatContainerRoot>
-            </div>
-
-            {/* Input */}
-            <PromptInput
-                value={input}
-                onValueChange={setInput}
-                onSubmit={handleSubmit}
-                isLoading={isGenerating}
-                className="mt-6 mb-4 border-border/90 bg-card/80 backdrop-blur transition-all duration-200 dark:border-gray-600 dark:bg-gray-800/80"
-                disabled={isGenerating}
-            >
-              <div className="flex flex-col gap-3">
-                {composerAttachments.length > 0 && (
-                    <div className="space-y-2 animate-in fade-in duration-200">
-                      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
-                        Attachments ({composerAttachments.length})
-                      </p>
-                      <div className="flex flex-wrap gap-3">
-                        {composerAttachments.map((attachment) => (
-                            <div
-                                key={attachment.id}
-                                className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-muted/40 group/attachment animate-in slide-in-from-left-4 duration-300 dark:border-gray-600 dark:bg-gray-700/40"
-                            >
-                              <img src={attachment.preview} alt={attachment.name} className="h-full w-full object-cover transition-transform group-hover/attachment:scale-110" />
-                              <button
-                                  type="button"
-                                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white transition-all hover:bg-destructive hover:scale-110 dark:bg-gray-800/90"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRemoveAttachment(attachment.id);
-                                  }}
-                                  aria-label={`Remove ${attachment.name}`}
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1 text-[10px] text-white">
-                                <span className="block truncate">{attachment.name}</span>
-                                <span className="opacity-70">{formatFileSize(attachment.size)}</span>
-                              </div>
-                            </div>
-                        ))}
+                  {/* Typing indicator */}
+                  {isGenerating && streamingMessageId === null && (
+                    <div className="flex justify-start">
+                      <div className="flex max-w-[38rem] flex-col gap-2 items-start">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium dark:bg-gray-700 dark:text-gray-400">
+                            <Bot className="h-3 w-3" />
+                          </div>
+                          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
+                            Ollama
+                          </span>
+                        </div>
+                        <TypingIndicator />
                       </div>
                     </div>
-                )}
-
-                <div className="relative">
-                  <PromptInputTextarea
-                      aria-label="Message"
-                      placeholder="Message Ollama..."
-                      onPaste={handlePasteImages}
-                      className="pr-12 min-h-[60px] dark:bg-gray-700/50 dark:border-gray-600 dark:text-gray-100 dark:placeholder:text-gray-400"
-                  />
-                  {isGenerating && (
-                      <div className="absolute right-3 top-3">
-                        <LoadingSpinner size={16} />
-                      </div>
                   )}
-                </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <PromptInputAction tooltip="Attach image" side="top">
-                      <Button asChild variant="ghost" size="icon" className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600">
-                        <label className="flex cursor-pointer items-center justify-center transition-all hover:scale-105">
-                          <Image className="h-5 w-5" />
-                          <span className="sr-only">Attach image</span>
-                          <input type="file" accept="image/*" multiple className="sr-only" onChange={handleImageUpload} />
-                        </label>
-                      </Button>
-                    </PromptInputAction>
+                  <ChatContainerScrollAnchor />
+                </ChatContainerContent>
+              )}
 
-                    <PromptInputAction tooltip="Clear all attachments" side="top" disabled={composerAttachments.length === 0}>
-                      <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600"
-                          onClick={() => setComposerAttachments([])}
-                          disabled={composerAttachments.length === 0}
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
-                    </PromptInputAction>
-                  </div>
-
-                  <PromptInputActions>
-                    <PromptInputAction
-                        tooltip={hasPendingInput ? "Send message" : "Type a message to send"}
-                        delayDuration={100}
-                    >
-                      <Button
-                          type="button"
-                          size="icon"
-                          className="rounded-full transition-all hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary-600 dark:hover:bg-primary-700"
-                          onClick={handleSubmit}
-                          disabled={!hasPendingInput || isGenerating}
-                      >
-                        {isGenerating ? <LoadingSpinner size={16} /> : <ArrowUp className="h-4 w-4" />}
-                      </Button>
-                    </PromptInputAction>
-                  </PromptInputActions>
-                </div>
+              <div className="pointer-events-none absolute bottom-4 right-4">
+                <ScrollButton className="pointer-events-auto shadow-md dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600" />
               </div>
-            </PromptInput>
+            </ChatContainerRoot>
           </div>
-        </main>
-      </div>
+
+          {/* Input */}
+          <PromptInput
+            value={input}
+            onValueChange={setInput}
+            onSubmit={handleSubmit}
+            isLoading={isGenerating}
+            className="chat-input-container mt-6 mb-4 transition-all duration-200"
+            disabled={isGenerating}
+          >
+            <div className="flex flex-col gap-3">
+              {composerAttachments.length > 0 && (
+                <div className="space-y-2 animate-in fade-in duration-200">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
+                    Attachments ({composerAttachments.length})
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {composerAttachments.map((attachment) => (
+                      <div
+                        key={attachment.id}
+                        className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-muted/40 group/attachment animate-in slide-in-from-left-4 duration-300 dark:border-gray-600 dark:bg-gray-700/40"
+                      >
+                        <img src={attachment.preview} alt={attachment.name} className="h-full w-full object-cover transition-transform group-hover/attachment:scale-110" />
+                        <button
+                          type="button"
+                          className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white transition-all hover:bg-destructive hover:scale-110 dark:bg-gray-800/90"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRemoveAttachment(attachment.id);
+                          }}
+                          aria-label={`Remove ${attachment.name}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1 text-[10px] text-white">
+                          <span className="block truncate">{attachment.name}</span>
+                          <span className="opacity-70">{formatFileSize(attachment.size)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="relative">
+                <PromptInputTextarea
+                  aria-label="Message"
+                  placeholder="Message Ollama..."
+                  onPaste={handlePasteImages}
+                  className="chat-input-textarea pr-12 min-h-[60px]"
+                />
+                {isGenerating && (
+                  <div className="absolute right-3 top-3">
+                    <LoadingSpinner size={16} />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <PromptInputAction tooltip="Attach image" side="top">
+                    <Button asChild variant="ghost" size="icon" className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600">
+                      <label className="flex cursor-pointer items-center justify-center transition-all hover:scale-105">
+                        <Image className="h-5 w-5" />
+                        <span className="sr-only">Attach image</span>
+                        <input type="file" accept="image/*" multiple className="sr-only" onChange={handleImageUpload} />
+                      </label>
+                    </Button>
+                  </PromptInputAction>
+
+                  <PromptInputAction tooltip="Clear all attachments" side="top" disabled={composerAttachments.length === 0}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600"
+                      onClick={() => setComposerAttachments([])}
+                      disabled={composerAttachments.length === 0}
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </PromptInputAction>
+                </div>
+
+                <PromptInputActions>
+                  <PromptInputAction
+                    tooltip={hasPendingInput ? "Send message" : "Type a message to send"}
+                    delayDuration={100}
+                  >
+                    <Button
+                      type="button"
+                      size="icon"
+                      className="chat-button-primary rounded-full transition-all"
+                      onClick={handleSubmit}
+                      disabled={!hasPendingInput || isGenerating}
+                    >
+                      {isGenerating ? <LoadingSpinner size={16} /> : <ArrowUp className="h-4 w-4" />}
+                    </Button>
+                  </PromptInputAction>
+                </PromptInputActions>
+              </div>
+            </div>
+          </PromptInput>
+        </div>
+      </main>
+    </div>
   );
 }
 

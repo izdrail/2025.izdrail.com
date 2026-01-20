@@ -1,12 +1,21 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import Nav from "@/components/nav.astro";
-import Home from "@/components/home.astro";
-import Contact from "@/components/contact.astro";
 import Chatbot from "@/components/Chatbot";
+import "@/styles/chat.css";
 ---
 
-<Layout title="izdrail.com">
+<Layout title="Chat - izdrail.com">
   <Nav />
-  <Chatbot client:load />
+  <div class="chat-page-container">
+    <Chatbot client:load />
+  </div>
 </Layout>
+
+<style>
+  .chat-page-container {
+    width: 100%;
+    height: calc(100vh - 80px);
+    background: var(--background);
+  }
+</style>

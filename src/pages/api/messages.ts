@@ -22,17 +22,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
     try {
-        console.log("Locals keys:", Object.keys(locals));
-        if (locals.runtime) {
-            console.log("Runtime keys:", Object.keys(locals.runtime));
-            if (locals.runtime.env) {
-                console.log("Env keys:", Object.keys(locals.runtime.env));
-            } else {
-                console.log("locals.runtime.env is missing");
-            }
-        } else {
-            console.log("locals.runtime is missing");
-        }
 
         const env = locals.runtime.env;
         const body = await request.json();

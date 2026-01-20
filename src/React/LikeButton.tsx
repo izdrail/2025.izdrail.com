@@ -26,8 +26,6 @@ const LikeButton = () => {
         setLikes(Math.max(0, currentLikes));
         setAnimateLikes(true);
         setTimeout(() => setAnimateLikes(false), 300);
-      } else {
-        console.log("Document does not exist.");
       }
     });
 

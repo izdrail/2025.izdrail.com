@@ -1,21 +1,84 @@
 ---
 interface Props {
   title: string;
+  description?: string;
+  image?: string;
+  url?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = "Building software since 2010, I'm a senior software engineer that loves building software tools for both public and private entities.",
+  image = "/og-image.png",
+  url = Astro.url.href,
+} = Astro.props;
+
+const canonicalURL = new URL(
+  Astro.url.pathname,
+  Astro.site || "https://izdrail.com",
+);
+const fullTitle =
+  title === "izdrail.com"
+    ? "Senior Software Engineer - Stefan Bogdanel"
+    : `${title} - Stefan Bogdanel`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Building software since 2010 , I'm a senior software engineer that loves building software tools for both public and private entities." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Stefan Bogdanel" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- OpenGraph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta
+      property="og:image"
+      content={new URL(image, Astro.site || "https://izdrail.com").href}
+    />
+    <meta
+      property="og:site_name"
+      content="Stefan Bogdanel - Senior Software Engineer"
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={url} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta
+      name="twitter:image"
+      content={new URL(image, Astro.site || "https://izdrail.com").href}
+    />
+    <meta name="twitter:creator" content="@izdrail" />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png" />
 
+    <!-- Preconnect to critical domains -->
+    <link
+      rel="preconnect"
+      href="https://www.googletagmanager.com"
+      crossorigin
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://static.hotjar.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.livechatinc.com" crossorigin />
+    <link rel="preconnect" href="https://analytics.tiktok.com" crossorigin />
+
     <link
       rel="preload"
       as="style"
@@ -24,8 +87,7 @@ const { title } = Astro.props;
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-      media="print"
-      onload="this.media='all'"
+      media="all"
     />
     <noscript>
       <link
@@ -34,39 +96,182 @@ const { title } = Astro.props;
       />
     </noscript>
 
-    <title>Senior software engineer - {title}</title>
+    <title>{fullTitle}</title>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ6GX9GPBE"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Stefan Bogdanel",
+        "jobTitle": "Senior Software Engineer",
+        "url": "https://izdrail.com",
+        "image": "https://izdrail.com/og-image.png",
+        "sameAs": [
+          "https://github.com/izdrail",
+          "https://linkedin.com/in/izdrail",
+          "https://twitter.com/izdrail"
+        ],
+        "knowsAbout": [
+          "Software Development",
+          "Backend Development",
+          "Enterprise Software Solutions",
+          "E-commerce Applications",
+          "Hardware Development",
+          "IoT Development",
+          "LoRaWAN",
+          "AI Development",
+          "Large Language Models",
+          "Custom AI Agents"
+        ],
+        "hasOccupation": {
+          "@type": "Occupation",
+          "name": "Senior Software Engineer",
+          "occupationLocation": {
+            "@type": "Country",
+            "name": "Romania"
+          },
+          "skills": [
+            "PHP",
+            "Laravel",
+            "JavaScript",
+            "TypeScript",
+            "Go",
+            "C",
+            "Python",
+            "React",
+            "Vue.js",
+            "Node.js",
+            "Docker",
+            "Kubernetes",
+            "AWS",
+            "PostgreSQL",
+            "MySQL",
+            "Redis"
+          ]
+        },
+        "alumniOf": {
+          "@type": "Organization",
+          "name": "Technical University"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Stefan Bogdanel - Software Engineering Services",
+        "description": "Building software since 2010, I'm a senior software engineer that loves building software tools for both public and private entities.",
+        "provider": {
+          "@type": "Person",
+          "name": "Stefan Bogdanel"
+        },
+        "areaServed": "Worldwide",
+        "serviceType": [
+          "Software Development",
+          "Backend Development",
+          "AI Development",
+          "Hardware Development",
+          "IoT Solutions"
+        ]
+      }
+    </script>
 
-  gtag('config', 'G-ZQ6GX9GPBE');
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ6GX9GPBE"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-ZQ6GX9GPBE");
+    </script>
     <!-- Hotjar Tracking Code for Izdrail -->
-<script>
-  (function(h,o,t,j,a,r){
-      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-      h._hjSettings={hjid:5321463,hjsv:6};
-      a=o.getElementsByTagName('head')[0];
-      r=o.createElement('script');r.async=1;
-      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-      a.appendChild(r);
-  })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-</script>
-<!-- Start of LiveChat (www.livechat.com) code -->
-<script>
-  window.__lc = window.__lc || {};
-  window.__lc.license = 19067114;
-  window.__lc.integration_name = "manual_onboarding";
-  window.__lc.product_name = "livechat";
-  ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
-</script>
-<noscript><a href="https://www.livechat.com/chat-with/19067114/" rel="nofollow">Chat with us</a>, powered by <a href="https://www.livechat.com/?welcome" rel="noopener nofollow" target="_blank">LiveChat</a></noscript>
-<!-- End of LiveChat code -->
-    <script id="customeros-metrics" type="text/javascript">(function (c, u, s, t, o, m, e, r, O, S) {var customerOS = document.createElement(s);customerOS.src = u;customerOS.async = true;(document.body || document.head).appendChild(customerOS);})(window, "https://cos60ekd4.laravelcompany.com/analytics-0.1.js", "script");</script>
+    <script>
+      (function (h, o, t, j, a, r) {
+        h.hj =
+          h.hj ||
+          function () {
+            (h.hj.q = h.hj.q || []).push(arguments);
+          };
+        h._hjSettings = { hjid: 5321463, hjsv: 6 };
+        a = o.getElementsByTagName("head")[0];
+        r = o.createElement("script");
+        r.async = 1;
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
+    </script>
+    <!-- Start of LiveChat (www.livechat.com) code -->
+    <script>
+      window.__lc = window.__lc || {};
+      window.__lc.license = 19067114;
+      window.__lc.integration_name = "manual_onboarding";
+      window.__lc.product_name = "livechat";
+      (function (n, t, c) {
+        function i(n) {
+          return e._h ? e._h.apply(null, n) : e._q.push(n);
+        }
+        var e = {
+          _q: [],
+          _h: null,
+          _v: "2.0",
+          on: function () {
+            i(["on", c.call(arguments)]);
+          },
+          once: function () {
+            i(["once", c.call(arguments)]);
+          },
+          off: function () {
+            i(["off", c.call(arguments)]);
+          },
+          get: function () {
+            if (!e._h)
+              throw new Error(
+                "[LiveChatWidget] You can't use getters before load.",
+              );
+            return i(["get", c.call(arguments)]);
+          },
+          call: function () {
+            i(["call", c.call(arguments)]);
+          },
+          init: function () {
+            var n = t.createElement("script");
+            ((n.async = !0),
+              (n.type = "text/javascript"),
+              (n.src = "https://cdn.livechatinc.com/tracking.js"),
+              t.head.appendChild(n));
+          },
+        };
+        (!n.__lc.asyncInit && e.init(),
+          (n.LiveChatWidget = n.LiveChatWidget || e));
+      })(window, document, [].slice);
+    </script>
+    <noscript
+      ><a href="https://www.livechat.com/chat-with/19067114/" rel="nofollow"
+        >Chat with us</a
+      >, powered by <a
+        href="https://www.livechat.com/?welcome"
+        rel="noopener nofollow"
+        target="_blank">LiveChat</a
+      ></noscript
+    >
+    <!-- End of LiveChat code -->
+    <script id="customeros-metrics" type="text/javascript">
+      (function (c, u, s, t, o, m, e, r, O, S) {
+        var customerOS = document.createElement(s);
+        customerOS.src = u;
+        customerOS.async = true;
+        (document.body || document.head).appendChild(customerOS);
+      })(
+        window,
+        "https://cos60ekd4.laravelcompany.com/analytics-0.1.js",
+        "script",
+      );
+    </script>
   </head>
   <body class="bg-[--background] md:px-48 lg:px-20 px-9">
     <slot />
@@ -123,17 +328,141 @@ const { title } = Astro.props;
     scrollbar-width: thin;
     scrollbar-color: var(--line) var(--container);
   }
+
+  /* Responsive Media Queries */
+
+  /* Small phones (320px) */
+  @media (max-width: 320px) {
+    body {
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 2rem !important;
+    }
+
+    .size-8 {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  /* Phones (480px) */
+  @media (max-width: 480px) {
+    body {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem !important;
+    }
+
+    h2,
+    h3 {
+      font-size: 1.5rem !important;
+    }
+  }
+
+  /* Large phones (576px) */
+  @media (min-width: 576px) {
+    body {
+      font-size: 16px;
+    }
+  }
+
+  /* Tablets (768px) - existing breakpoint */
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3.75rem !important;
+    }
+  }
+
+  /* Large tablets (992px) */
+  @media (min-width: 992px) {
+    body {
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 960px;
+    }
+  }
+
+  /* Desktop (1200px) */
+  @media (min-width: 1200px) {
+    .container {
+      max-width: 1140px;
+    }
+  }
+
+  /* Improve touch targets on mobile */
+  @media (max-width: 768px) {
+    a,
+    button {
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 </style>
 <!-- TikTok Pixel Code Start -->
 <script>
-    !function (w, d, t) {
-        w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-            var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-        ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  !(function (w, d, t) {
+    w.TiktokAnalyticsObject = t;
+    var ttq = (w[t] = w[t] || []);
+    ((ttq.methods = [
+      "page",
+      "track",
+      "identify",
+      "instances",
+      "debug",
+      "on",
+      "off",
+      "once",
+      "ready",
+      "alias",
+      "group",
+      "enableCookie",
+      "disableCookie",
+      "holdConsent",
+      "revokeConsent",
+      "grantConsent",
+    ]),
+      (ttq.setAndDefer = function (t, e) {
+        t[e] = function () {
+          t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+        };
+      }));
+    for (var i = 0; i < ttq.methods.length; i++)
+      ttq.setAndDefer(ttq, ttq.methods[i]);
+    ((ttq.instance = function (t) {
+      for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++)
+        ttq.setAndDefer(e, ttq.methods[n]);
+      return e;
+    }),
+      (ttq.load = function (e, n) {
+        var r = "https://analytics.tiktok.com/i18n/pixel/events.js",
+          o = n && n.partner;
+        ((ttq._i = ttq._i || {}),
+          (ttq._i[e] = []),
+          (ttq._i[e]._u = r),
+          (ttq._t = ttq._t || {}),
+          (ttq._t[e] = +new Date()),
+          (ttq._o = ttq._o || {}),
+          (ttq._o[e] = n || {}));
+        n = document.createElement("script");
+        ((n.type = "text/javascript"),
+          (n.async = !0),
+          (n.src = r + "?sdkid=" + e + "&lib=" + t));
+        e = document.getElementsByTagName("script")[0];
+        e.parentNode.insertBefore(n, e);
+      }));
 
-
-        ttq.load('D2VHU7BC77UD68QFB9K0');
-        ttq.page();
-    }(window, document, 'ttq');
+    ttq.load("D2VHU7BC77UD68QFB9K0");
+    ttq.page();
+  })(window, document, "ttq");
 </script>
 <!-- TikTok Pixel Code End -->

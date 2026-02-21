@@ -48,6 +48,17 @@ import {
   User,
   Download,
   Trash2,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  Search,
+  Share2,
+  FileDown,
+  FileUp,
+  Keyboard,
+  StopCircle,
+  FolderOpen,
 } from "lucide-react";
 
 type Role = "user" | "assistant";
@@ -120,11 +131,11 @@ function truncateText(text: string, limit = 80): string {
 
 function findConversationTitle(
   groups: HistoryGroup[],
-  conversationId: string
+  conversationId: string,
 ): string {
   for (const section of groups) {
     const conversation = section.conversations.find(
-      (entry) => entry.id === conversationId
+      (entry) => entry.id === conversationId,
     );
     if (conversation) return conversation.title;
   }
@@ -134,18 +145,22 @@ function findConversationTitle(
 function cloneHistoryGroups(groups: HistoryGroup[]): HistoryGroup[] {
   return groups.map((section) => ({
     label: section.label,
-    conversations: section.conversations.map((conversation) => ({ ...conversation })),
+    conversations: section.conversations.map((conversation) => ({
+      ...conversation,
+    })),
   }));
 }
 
 function updateConversationInGroups(
   groups: HistoryGroup[],
   conversationId: string,
-  updater: (existing: HistoryConversation) => HistoryConversation
+  updater: (existing: HistoryConversation) => HistoryConversation,
 ): HistoryGroup[] {
   const next = cloneHistoryGroups(groups);
   for (const section of next) {
-    const index = section.conversations.findIndex((c) => c.id === conversationId);
+    const index = section.conversations.findIndex(
+      (c) => c.id === conversationId,
+    );
     if (index !== -1) {
       const existing = section.conversations[index];
       section.conversations[index] = updater(existing);
@@ -157,7 +172,7 @@ function updateConversationInGroups(
 
 function createPlaceholderConversation(
   title: string,
-  preview: string
+  preview: string,
 ): ConversationMessage[] {
   return [
     {
@@ -213,24 +228,25 @@ async function apiCreateConversation(payload: {
 }
 
 async function apiGetMessages(
-  conversationId: string
+  conversationId: string,
 ): Promise<ConversationMessage[]> {
   try {
     const res = await fetch(`${API_BASE}/messages/${conversationId}`);
     if (!res.ok) return [];
     const data = await res.json();
     if (Array.isArray(data)) {
-      return data.map(msg => ({
+      return data.map((msg) => ({
         id: msg.id,
         role: msg.role as Role,
-        name: msg.name || (msg.role === 'user' ? 'You' : 'Ollama'),
-        avatarFallback: msg.avatarFallback || (msg.role === 'user' ? 'YO' : 'OL'),
-        content: msg.content || '',
-        markdown: msg.markdown ?? (msg.role === 'assistant'),
+        name: msg.name || (msg.role === "user" ? "You" : "Ollama"),
+        avatarFallback:
+          msg.avatarFallback || (msg.role === "user" ? "YO" : "OL"),
+        content: msg.content || "",
+        markdown: msg.markdown ?? msg.role === "assistant",
         attachments: msg.attachments ? JSON.parse(msg.attachments) : undefined,
         reaction: msg.reaction || null,
         timestamp: msg.created_at ? new Date(msg.created_at) : new Date(),
-        created_at: msg.created_at
+        created_at: msg.created_at,
       }));
     }
     return [];
@@ -255,7 +271,9 @@ async function apiCreateMessage(payload: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...payload,
-        attachments: payload.attachments ? JSON.stringify(payload.attachments) : null,
+        attachments: payload.attachments
+          ? JSON.stringify(payload.attachments)
+          : null,
       }),
     });
     return res.ok;
@@ -268,20 +286,34 @@ async function apiCreateMessage(payload: {
    Component
 ------------------------- */
 
-const seedActiveConversationId = historySeed[0]?.conversations[0]?.id ?? createId();
+const seedActiveConversationId =
+  historySeed[0]?.conversations[0]?.id ?? createId();
 
 // Loading spinner component
-const LoadingSpinner = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
-  <Loader2 className={cn("animate-spin", className)} size={size} />
-);
+const LoadingSpinner = ({
+  size = 20,
+  className = "",
+}: {
+  size?: number;
+  className?: string;
+}) => <Loader2 className={cn("animate-spin", className)} size={size} />;
 
 // Typing indicator component
 const TypingIndicator = () => (
   <div className="flex items-center space-x-1 px-4 py-2">
     <div className="flex space-x-1">
-      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
-      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
-      <div className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+      <div
+        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+        style={{ animationDelay: "0ms" }}
+      />
+      <div
+        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+        style={{ animationDelay: "150ms" }}
+      />
+      <div
+        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+        style={{ animationDelay: "300ms" }}
+      />
     </div>
     <span className="text-xs text-muted-foreground">AI is thinking...</span>
   </div>
@@ -292,7 +324,7 @@ const ModelSelector = ({
   models,
   selectedModel,
   onModelChange,
-  isLoading = false
+  isLoading = false,
 }: {
   models: { id: string; name: string }[];
   selectedModel: string;
@@ -325,18 +357,21 @@ const ModelSelector = ({
 );
 
 // Safe Markdown content component
-const SafeMarkdownContent = ({ content, className = "" }: { content: any; className?: string }) => {
+const SafeMarkdownContent = ({
+  content,
+  className = "",
+}: {
+  content: any;
+  className?: string;
+}) => {
   const safeContent = useMemo(() => {
-    if (typeof content === 'string') return content;
-    if (content == null) return '';
+    if (typeof content === "string") return content;
+    if (content == null) return "";
     return String(content);
   }, [content]);
 
   return (
-    <MessageContent
-      markdown={true}
-      className={className}
-    >
+    <MessageContent markdown={true} className={className}>
       {safeContent}
     </MessageContent>
   );
@@ -344,9 +379,11 @@ const SafeMarkdownContent = ({ content, className = "" }: { content: any; classN
 
 function Chatbot() {
   const [historyGroups, setHistoryGroups] = useState<HistoryGroup[]>(() =>
-    cloneHistoryGroups(historySeed)
+    cloneHistoryGroups(historySeed),
   );
-  const [conversations, setConversations] = useState<Record<string, ConversationMessage[]>>(() => {
+  const [conversations, setConversations] = useState<
+    Record<string, ConversationMessage[]>
+  >(() => {
     const map: Record<string, ConversationMessage[]> = {};
     map[seedActiveConversationId] = [
       {
@@ -363,9 +400,13 @@ function Chatbot() {
     ];
     return map;
   });
-  const [activeConversationId, setActiveConversationId] = useState(seedActiveConversationId);
+  const [activeConversationId, setActiveConversationId] = useState(
+    seedActiveConversationId,
+  );
   const [chatCounter, setChatCounter] = useState(2);
-  const [composerAttachments, setComposerAttachments] = useState<Attachment[]>([]);
+  const [composerAttachments, setComposerAttachments] = useState<Attachment[]>(
+    [],
+  );
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -375,7 +416,22 @@ function Chatbot() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+    null,
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<number[]>([]);
+  const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState<string | null>(null);
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 
   const activeConversationTitle = useMemo(() => {
     return findConversationTitle(historyGroups, activeConversationId);
@@ -383,10 +439,11 @@ function Chatbot() {
 
   const messages = useMemo(
     () => conversations[activeConversationId] ?? [],
-    [conversations, activeConversationId]
+    [conversations, activeConversationId],
   );
 
-  const hasPendingInput = input.trim().length > 0 || composerAttachments.length > 0;
+  const hasPendingInput =
+    input.trim().length > 0 || composerAttachments.length > 0;
 
   /* -------------------------
      Fetch models
@@ -478,7 +535,7 @@ function Chatbot() {
   ------------------------- */
   const updateConversationMessages = (
     conversationId: string,
-    updater: (current: ConversationMessage[]) => ConversationMessage[]
+    updater: (current: ConversationMessage[]) => ConversationMessage[],
   ) => {
     setConversations((prev) => {
       const current = prev[conversationId] ?? [];
@@ -487,14 +544,18 @@ function Chatbot() {
     });
   };
 
-  const refreshHistoryPreview = (conversationId: string, preview: string, title?: string) => {
+  const refreshHistoryPreview = (
+    conversationId: string,
+    preview: string,
+    title?: string,
+  ) => {
     setHistoryGroups((prev) =>
       updateConversationInGroups(prev, conversationId, (existing) => ({
         id: existing.id,
         title: title ?? existing.title,
         preview: truncateText(preview),
         timestamp: "Just now",
-      }))
+      })),
     );
   };
 
@@ -521,7 +582,7 @@ function Chatbot() {
 
   const handlePasteImages = (event: ClipboardEvent<HTMLTextAreaElement>) => {
     const files = Array.from(event.clipboardData?.files ?? []).filter((file) =>
-      file.type.startsWith("image/")
+      file.type.startsWith("image/"),
     );
     if (files.length === 0) return;
     event.preventDefault();
@@ -530,7 +591,7 @@ function Chatbot() {
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []).filter((file) =>
-      file.type.startsWith("image/")
+      file.type.startsWith("image/"),
     );
     if (files.length === 0) return;
     files.forEach(addAttachmentFromFile);
@@ -539,7 +600,7 @@ function Chatbot() {
 
   const handleRemoveAttachment = (attachmentId: string) => {
     setComposerAttachments((prev) =>
-      prev.filter((attachment) => attachment.id !== attachmentId)
+      prev.filter((attachment) => attachment.id !== attachmentId),
     );
   };
 
@@ -556,13 +617,16 @@ function Chatbot() {
     }
   };
 
-  const toggleReaction = (messageId: string, reaction: "upvote" | "downvote") => {
+  const toggleReaction = (
+    messageId: string,
+    reaction: "upvote" | "downvote",
+  ) => {
     updateConversationMessages(activeConversationId, (current) =>
       current.map((msg) =>
         msg.id === messageId
           ? { ...msg, reaction: msg.reaction === reaction ? null : reaction }
-          : msg
-      )
+          : msg,
+      ),
     );
   };
 
@@ -580,12 +644,17 @@ function Chatbot() {
       name: "You",
       avatarFallback: "YO",
       content: userContent,
-      attachments: composerAttachments.length ? [...composerAttachments] : undefined,
+      attachments: composerAttachments.length
+        ? [...composerAttachments]
+        : undefined,
       reaction: null,
       timestamp: new Date(),
     };
 
-    updateConversationMessages(activeConversationId, (curr) => [...curr, userMessage]);
+    updateConversationMessages(activeConversationId, (curr) => [
+      ...curr,
+      userMessage,
+    ]);
     refreshHistoryPreview(activeConversationId, userContent);
 
     setInput("");
@@ -667,11 +736,13 @@ function Chatbot() {
               assistantContent += contentChunk;
               updateConversationMessages(activeConversationId, (curr) =>
                 curr.map((msg) =>
-                  msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
-                )
+                  msg.id === assistantMessageId
+                    ? { ...msg, content: assistantContent }
+                    : msg,
+                ),
               );
             }
-          } catch { }
+          } catch {}
         }
       }
 
@@ -683,11 +754,13 @@ function Chatbot() {
             assistantContent += contentChunk;
             updateConversationMessages(activeConversationId, (curr) =>
               curr.map((msg) =>
-                msg.id === assistantMessageId ? { ...msg, content: assistantContent } : msg
-              )
+                msg.id === assistantMessageId
+                  ? { ...msg, content: assistantContent }
+                  : msg,
+              ),
             );
           }
-        } catch { }
+        } catch {}
       }
 
       // Save assistant message to your worker
@@ -714,7 +787,10 @@ function Chatbot() {
         content: "⚠️ Failed to reach AI. Check your connection.",
         timestamp: new Date(),
       };
-      updateConversationMessages(activeConversationId, (curr) => [...curr, errorMessage]);
+      updateConversationMessages(activeConversationId, (curr) => [
+        ...curr,
+        errorMessage,
+      ]);
       apiCreateMessage({
         id: errorMessage.id,
         conversation_id: activeConversationId,
@@ -724,7 +800,7 @@ function Chatbot() {
         content: errorMessage.content,
         markdown: false,
         attachments: null,
-      }).catch(() => { });
+      }).catch(() => {});
     } finally {
       setIsGenerating(false);
       setStreamingMessageId(null);
@@ -779,7 +855,10 @@ function Chatbot() {
       timestamp: new Date(),
     };
 
-    setConversations((prev) => ({ ...prev, [conversationId]: [initialAssistant] }));
+    setConversations((prev) => ({
+      ...prev,
+      [conversationId]: [initialAssistant],
+    }));
     apiCreateMessage({
       id: initialAssistant.id,
       conversation_id: conversationId,
@@ -789,13 +868,15 @@ function Chatbot() {
       content: initialAssistant.content,
       markdown: true,
       attachments: null,
-    }).catch(() => { });
+    }).catch(() => {});
   };
 
   /* -------------------------
      Select conversation
   ------------------------- */
-  const handleSelectConversation = async (conversation: HistoryConversation) => {
+  const handleSelectConversation = async (
+    conversation: HistoryConversation,
+  ) => {
     if (conversation.id === activeConversationId) return;
 
     setActiveConversationId(conversation.id);
@@ -812,7 +893,10 @@ function Chatbot() {
       if (msgs.length === 0) {
         setConversations((prev) => ({
           ...prev,
-          [conversation.id]: createPlaceholderConversation(conversation.title, conversation.preview),
+          [conversation.id]: createPlaceholderConversation(
+            conversation.title,
+            conversation.preview,
+          ),
         }));
       } else {
         setConversations((prev) => ({
@@ -828,8 +912,301 @@ function Chatbot() {
      Format timestamp
   ------------------------- */
   const formatMessageTime = (timestamp?: Date) => {
-    if (!timestamp) return '';
-    return timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (!timestamp) return "";
+    return timestamp.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  /* -------------------------
+     Search functionality
+  ------------------------- */
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results: number[] = [];
+      messages.forEach((msg, index) => {
+        if (msg.content.toLowerCase().includes(searchQuery.toLowerCase())) {
+          results.push(index);
+        }
+      });
+      setSearchResults(results);
+      setCurrentSearchIndex(0);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery, messages]);
+
+  const scrollToSearchResult = (index: number) => {
+    const messageElements = document.querySelectorAll("[data-message-index]");
+    const element = messageElements[index] as HTMLElement;
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+      element.classList.add("ring-2", "ring-primary");
+      setTimeout(
+        () => element.classList.remove("ring-2", "ring-primary"),
+        2000,
+      );
+    }
+  };
+
+  const handleSearchNext = () => {
+    if (searchResults.length === 0) return;
+    const nextIndex = (currentSearchIndex + 1) % searchResults.length;
+    setCurrentSearchIndex(nextIndex);
+    scrollToSearchResult(searchResults[nextIndex]);
+  };
+
+  const handleSearchPrev = () => {
+    if (searchResults.length === 0) return;
+    const prevIndex =
+      (currentSearchIndex - 1 + searchResults.length) % searchResults.length;
+    setCurrentSearchIndex(prevIndex);
+    scrollToSearchResult(searchResults[prevIndex]);
+  };
+
+  /* -------------------------
+     Keyboard shortcuts
+  ------------------------- */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit();
+      }
+      if (e.key === "Escape") {
+        if (isSearchOpen) {
+          setIsSearchOpen(false);
+          setSearchQuery("");
+        } else if (showShortcuts) {
+          setShowShortcuts(false);
+        }
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+        setTimeout(() => searchInputRef.current?.focus(), 100);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === "n") {
+        e.preventDefault();
+        handleNewChat();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "m") {
+        e.preventDefault();
+        toggleVoiceInput();
+      }
+    };
+
+    const textarea = textareaRef.current;
+    textarea?.addEventListener("keydown", handleKeyDown);
+    return () => textarea?.removeEventListener("keydown", handleKeyDown);
+  }, [isSearchOpen, showShortcuts, isGenerating, hasPendingInput]);
+
+  /* -------------------------
+     Voice input (Speech-to-Text)
+  ------------------------- */
+  const toggleVoiceInput = () => {
+    if (
+      !("webkitSpeechRecognition" in window) &&
+      !("SpeechRecognition" in window)
+    ) {
+      alert("Speech recognition is not supported in your browser.");
+      return;
+    }
+
+    if (isRecording) {
+      setIsRecording(false);
+      return;
+    }
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setInput((prev) => prev + transcript);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      setIsRecording(false);
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognition.start();
+    setIsRecording(true);
+  };
+
+  /* -------------------------
+     Text-to-Speech
+  ------------------------- */
+  const speakMessage = (message: ConversationMessage) => {
+    if (!synth) {
+      alert("Text-to-speech is not supported in your browser.");
+      return;
+    }
+
+    if (isSpeaking === message.id) {
+      synth.cancel();
+      setIsSpeaking(null);
+      return;
+    }
+
+    synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(message.content);
+    utterance.onend = () => setIsSpeaking(null);
+    synth.speak(utterance);
+    setIsSpeaking(message.id);
+  };
+
+  const stopSpeaking = () => {
+    if (synth) {
+      synth.cancel();
+      setIsSpeaking(null);
+    }
+  };
+
+  /* -------------------------
+     Export/Import functionality
+  ------------------------- */
+  const exportConversation = (format: "json" | "markdown") => {
+    const conversation = messages;
+    const title = activeConversationTitle;
+
+    let content: string;
+    let mimeType: string;
+    let extension: string;
+
+    if (format === "json") {
+      content = JSON.stringify({ title, messages: conversation }, null, 2);
+      mimeType = "application/json";
+      extension = "json";
+    } else {
+      content = `# ${title}\n\n${conversation
+        .map(
+          (msg) =>
+            `**${msg.role === "user" ? "You" : msg.name}** (${formatMessageTime(msg.timestamp)})\n\n${msg.content}\n\n---\n`,
+        )
+        .join("\n")}`;
+      mimeType = "text/markdown";
+      extension = "md";
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.${extension}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setIsExportMenuOpen(false);
+  };
+
+  const importConversation = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const content = e.target?.result as string;
+        let data: { title?: string; messages?: ConversationMessage[] };
+
+        if (file.name.endsWith(".json")) {
+          data = JSON.parse(content);
+        } else {
+          return;
+        }
+
+        if (!data.messages) {
+          alert("Invalid conversation file");
+          return;
+        }
+
+        const conversationId = createId();
+        const title = data.title || `Imported Chat ${chatCounter}`;
+
+        const created = await apiCreateConversation({
+          id: conversationId,
+          title,
+          preview: "Imported conversation",
+          timestamp: "Just now",
+        });
+
+        if (created) {
+          setConversations((prev) => ({
+            ...prev,
+            [conversationId]: data.messages!.map((msg) => ({
+              ...msg,
+              id: createId(),
+              timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+            })),
+          }));
+          setHistoryGroups((prev) => {
+            const next = cloneHistoryGroups(prev);
+            if (next.length === 0)
+              next.push({ label: "Today", conversations: [] });
+            next[0].conversations = [
+              {
+                id: conversationId,
+                title,
+                preview: "Imported conversation",
+                timestamp: "Just now",
+              },
+              ...next[0].conversations,
+            ];
+            return next;
+          });
+          setActiveConversationId(conversationId);
+          setChatCounter((c) => c + 1);
+        }
+      } catch (err) {
+        alert("Failed to import conversation");
+      }
+    };
+    reader.readAsText(file);
+    setIsImportDialogOpen(false);
+    event.target.value = "";
+  };
+
+  /* -------------------------
+     Share functionality
+  ------------------------- */
+  const shareConversation = async () => {
+    const conversation = messages;
+    const title = activeConversationTitle;
+    const text = `${title}\n\n${conversation
+      .slice(0, 5)
+      .map(
+        (msg) =>
+          `${msg.role === "user" ? "You" : msg.name}: ${msg.content.slice(0, 100)}${msg.content.length > 100 ? "..." : ""}`,
+      )
+      .join("\n\n")}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text });
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          await navigator.clipboard.writeText(text);
+          alert("Conversation copied to clipboard!");
+        }
+      }
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("Conversation copied to clipboard!");
+    }
   };
 
   /* -------------------------
@@ -841,7 +1218,9 @@ function Chatbot() {
       <div
         className={cn(
           "fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300 dark:bg-black/70",
-          isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isSidebarOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         onClick={() => setIsSidebarOpen(false)}
         aria-hidden="true"
@@ -853,15 +1232,13 @@ function Chatbot() {
           "chat-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col shadow-xl transition-transform duration-300 ease-in-out",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full",
           "lg:static lg:h-full lg:shadow-none",
-          isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0"
+          isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0",
         )}
       >
         {/* Sidebar header */}
         <div className="chat-sidebar-header flex items-center justify-between px-4 py-4">
           <div>
-            <p className="chat-label">
-              History
-            </p>
+            <p className="chat-label">History</p>
             <p className="chat-title text-sm">Recent chats</p>
           </div>
           <div className="flex items-center gap-1">
@@ -896,15 +1273,21 @@ function Chatbot() {
           {isLoadingHistory ? (
             <div className="flex items-center justify-center py-8">
               <LoadingSpinner />
-              <span className="ml-2 text-sm text-muted-foreground dark:text-gray-400">Loading conversations...</span>
+              <span className="ml-2 text-sm text-muted-foreground dark:text-gray-400">
+                Loading conversations...
+              </span>
             </div>
           ) : historyGroups.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center px-4">
               <div className="rounded-full bg-muted p-3 mb-3 dark:bg-gray-700">
                 <Bot className="h-6 w-6 text-muted-foreground dark:text-gray-400" />
               </div>
-              <p className="text-sm font-medium text-foreground dark:text-gray-100 mb-1">No conversations yet</p>
-              <p className="text-xs text-muted-foreground dark:text-gray-400">Start a new chat to begin</p>
+              <p className="text-sm font-medium text-foreground dark:text-gray-100 mb-1">
+                No conversations yet
+              </p>
+              <p className="text-xs text-muted-foreground dark:text-gray-400">
+                Start a new chat to begin
+              </p>
             </div>
           ) : (
             historyGroups.map((section) => (
@@ -921,7 +1304,7 @@ function Chatbot() {
                         type="button"
                         className={cn(
                           "chat-conversation-item w-full px-3 py-2 text-left",
-                          isActive && "active"
+                          isActive && "active",
                         )}
                         onClick={() => handleSelectConversation(conversation)}
                       >
@@ -931,7 +1314,9 @@ function Chatbot() {
                             {conversation.timestamp}
                           </span>
                         </div>
-                        <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">{conversation.preview}</p>
+                        <p className="mt-1 text-xs text-muted-foreground dark:text-gray-400">
+                          {conversation.preview}
+                        </p>
                       </button>
                     );
                   })}
@@ -962,13 +1347,21 @@ function Chatbot() {
                 size="icon"
                 className="hidden lg:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 onClick={() => setIsSidebarCollapsed((v) => !v)}
-                aria-label={isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+                aria-label={
+                  isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"
+                }
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+                {isSidebarCollapsed ? (
+                  <PanelLeftOpen className="h-4 w-4" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4" />
+                )}
               </Button>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">Ollama</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
+                Ollama
+              </p>
               <h1 className="truncate text-lg font-semibold text-foreground dark:text-gray-100 sm:text-xl">
                 {activeConversationTitle}
               </h1>
@@ -982,8 +1375,198 @@ function Chatbot() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <ThemeToggle className="hidden lg:inline-flex" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={() => {
+                setIsSearchOpen(true);
+                setTimeout(() => searchInputRef.current?.focus(), 100);
+              }}
+              aria-label="Search in chat"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
+                aria-label="Export conversation"
+              >
+                <FileDown className="h-4 w-4" />
+              </Button>
+              {isExportMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-40 rounded-lg border border-border bg-background shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700">
+                  <button
+                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted dark:text-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => exportConversation("json")}
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export JSON
+                  </button>
+                  <button
+                    className="flex w-full items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted dark:text-gray-100 dark:hover:bg-gray-700"
+                    onClick={() => exportConversation("markdown")}
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Export Markdown
+                  </button>
+                </div>
+              )}
+            </div>
+            <label className="cursor-pointer">
+              <input
+                type="file"
+                accept=".json"
+                className="sr-only"
+                onChange={importConversation}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                asChild
+                onClick={() => setIsImportDialogOpen(true)}
+                aria-label="Import conversation"
+              >
+                <span>
+                  <FileUp className="h-4 w-4" />
+                </span>
+              </Button>
+            </label>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={shareConversation}
+              aria-label="Share conversation"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              onClick={() => setShowShortcuts(!showShortcuts)}
+              aria-label="Keyboard shortcuts"
+            >
+              <Keyboard className="h-4 w-4" />
+            </Button>
           </div>
         </header>
+
+        {/* Search bar */}
+        {isSearchOpen && (
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background/95 dark:bg-gray-800/95 backdrop-blur-sm">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search messages..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-none focus:outline-none text-sm text-foreground placeholder:text-muted-foreground"
+            />
+            {searchResults.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {currentSearchIndex + 1}/{searchResults.length}
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={handleSearchPrev}
+              disabled={searchResults.length === 0}
+            >
+              <span className="text-xs">↑</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={handleSearchNext}
+              disabled={searchResults.length === 0}
+            >
+              <span className="text-xs">↓</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        {/* Keyboard shortcuts modal */}
+        {showShortcuts && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-xl border border-border bg-background p-6 shadow-xl dark:bg-gray-800 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
+                  Keyboard Shortcuts
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowShortcuts(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground dark:text-gray-400">
+                    Send message
+                  </span>
+                  <kbd className="px-2 py-1 text-xs bg-muted rounded dark:bg-gray-700">
+                    Ctrl + Enter
+                  </kbd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground dark:text-gray-400">
+                    Search in chat
+                  </span>
+                  <kbd className="px-2 py-1 text-xs bg-muted rounded dark:bg-gray-700">
+                    Ctrl + K
+                  </kbd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground dark:text-gray-400">
+                    New chat
+                  </span>
+                  <kbd className="px-2 py-1 text-xs bg-muted rounded dark:bg-gray-700">
+                    Ctrl + N
+                  </kbd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground dark:text-gray-400">
+                    Voice input
+                  </span>
+                  <kbd className="px-2 py-1 text-xs bg-muted rounded dark:bg-gray-700">
+                    Ctrl + Shift + M
+                  </kbd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground dark:text-gray-400">
+                    Close dialogs
+                  </span>
+                  <kbd className="px-2 py-1 text-xs bg-muted rounded dark:bg-gray-700">
+                    Esc
+                  </kbd>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Chat area */}
         <div className="flex flex-1 flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-8">
@@ -993,7 +1576,9 @@ function Chatbot() {
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <LoadingSpinner size={32} className="mx-auto mb-4" />
-                    <p className="text-sm text-muted-foreground dark:text-gray-400">Loading conversation...</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-400">
+                      Loading conversation...
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -1003,9 +1588,12 @@ function Chatbot() {
                       <div className="rounded-full bg-primary/10 p-4 mb-4 dark:bg-primary/20">
                         <Bot className="h-8 w-8 text-primary dark:text-primary-400" />
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">Welcome to Ollama Chat</h3>
+                      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">
+                        Welcome to Ollama Chat
+                      </h3>
                       <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
-                        Start a conversation by typing a message below. I'm powered by your private AI endpoint.
+                        Start a conversation by typing a message below. I'm
+                        powered by your private AI endpoint.
                       </p>
                       <div className="flex flex-wrap gap-2 justify-center">
                         <Button
@@ -1022,18 +1610,39 @@ function Chatbot() {
                   ) : (
                     messages.map((message, index) => {
                       const isUser = message.role === "user";
-                      const isLatestAssistant = !isUser && index === messages.length - 1;
+                      const isLatestAssistant =
+                        !isUser && index === messages.length - 1;
                       const isStreaming = message.id === streamingMessageId;
 
                       return (
-                        <Message key={message.id} className={cn(isUser ? "justify-end" : "justify-start")} aria-live="polite">
-                          <div className={cn("flex max-w-[38rem] flex-col gap-2", isUser ? "items-end" : "items-start")}>
+                        <Message
+                          key={message.id}
+                          className={cn(
+                            isUser ? "justify-end" : "justify-start",
+                          )}
+                          aria-live="polite"
+                          data-message-index={index}
+                        >
+                          <div
+                            className={cn(
+                              "flex max-w-[38rem] flex-col gap-2",
+                              isUser ? "items-end" : "items-start",
+                            )}
+                          >
                             <div className="flex items-center gap-2">
-                              <div className={cn(
-                                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
-                                isUser ? "bg-gradient-to-br from-[#a476ff] to-[#8a5fd6] text-white" : "bg-[var(--chat-card-bg)] text-[var(--chat-white-icon)] border border-[var(--chat-border)]"
-                              )}>
-                                {isUser ? <User className="h-3 w-3" /> : <Bot className="h-3 w-3" />}
+                              <div
+                                className={cn(
+                                  "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
+                                  isUser
+                                    ? "bg-gradient-to-br from-[#a476ff] to-[#8a5fd6] text-white"
+                                    : "bg-[var(--chat-card-bg)] text-[var(--chat-white-icon)] border border-[var(--chat-border)]",
+                                )}
+                              >
+                                {isUser ? (
+                                  <User className="h-3 w-3" />
+                                ) : (
+                                  <Bot className="h-3 w-3" />
+                                )}
                               </div>
                               <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
                                 {message.name}
@@ -1051,7 +1660,7 @@ function Chatbot() {
                                     isUser
                                       ? "message-user"
                                       : "message-assistant prose-headings:mt-0 prose-headings:font-semibold prose-p:mt-2",
-                                    isStreaming && "pr-10"
+                                    isStreaming && "pr-10",
                                   )}
                                 />
                               ) : (
@@ -1062,7 +1671,7 @@ function Chatbot() {
                                     isUser
                                       ? "message-user"
                                       : "message-assistant",
-                                    isStreaming && "pr-10"
+                                    isStreaming && "pr-10",
                                   )}
                                 >
                                   {message.content}
@@ -1075,101 +1684,183 @@ function Chatbot() {
                               )}
 
                               {/* Attachments */}
-                              {message.attachments && message.attachments.length > 0 && (
-                                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                                  {message.attachments.map((attachment) => (
-                                    <figure
-                                      key={attachment.id}
-                                      className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment dark:border-gray-600 dark:bg-gray-700/40"
-                                    >
-                                      <img
-                                        src={attachment.preview}
-                                        alt={attachment.name}
-                                        className="h-32 w-full object-cover transition-transform group-hover/attachment:scale-105"
-                                      />
-                                      <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground dark:text-gray-400">
-                                        <span className="truncate">{attachment.name}</span>
-                                        <div className="flex items-center gap-1">
-                                          <span className="shrink-0 pl-2">{formatFileSize(attachment.size)}</span>
-                                          <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100 dark:text-gray-300 dark:hover:bg-gray-600"
-                                            onClick={() => window.open(attachment.preview, '_blank')}
-                                          >
-                                            <Download className="h-3 w-3" />
-                                          </Button>
-                                        </div>
-                                      </figcaption>
-                                    </figure>
-                                  ))}
-                                </div>
-                              )}
+                              {message.attachments &&
+                                message.attachments.length > 0 && (
+                                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                                    {message.attachments.map((attachment) => (
+                                      <figure
+                                        key={attachment.id}
+                                        className="overflow-hidden rounded-xl border border-border bg-background/40 group/attachment dark:border-gray-600 dark:bg-gray-700/40"
+                                      >
+                                        <img
+                                          src={attachment.preview}
+                                          alt={attachment.name}
+                                          className="h-32 w-full object-cover transition-transform group-hover/attachment:scale-105"
+                                        />
+                                        <figcaption className="flex items-center justify-between truncate px-3 py-2 text-xs text-muted-foreground dark:text-gray-400">
+                                          <span className="truncate">
+                                            {attachment.name}
+                                          </span>
+                                          <div className="flex items-center gap-1">
+                                            <span className="shrink-0 pl-2">
+                                              {formatFileSize(attachment.size)}
+                                            </span>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              className="h-6 w-6 rounded-full opacity-0 transition-opacity group-hover/attachment:opacity-100 dark:text-gray-300 dark:hover:bg-gray-600"
+                                              onClick={() =>
+                                                window.open(
+                                                  attachment.preview,
+                                                  "_blank",
+                                                )
+                                              }
+                                            >
+                                              <Download className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        </figcaption>
+                                      </figure>
+                                    ))}
+                                  </div>
+                                )}
 
                               {/* Actions for assistant */}
                               {!isUser && (
                                 <MessageActions
                                   className={cn(
                                     "-ml-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
-                                    (isLatestAssistant || isStreaming) && "opacity-100"
+                                    (isLatestAssistant || isStreaming) &&
+                                      "opacity-100",
                                   )}
                                 >
-                                  <MessageAction tooltip={copiedMessageId === message.id ? "Copied" : "Copy message"} delayDuration={100}>
+                                  <MessageAction
+                                    tooltip={
+                                      copiedMessageId === message.id
+                                        ? "Copied"
+                                        : "Copy message"
+                                    }
+                                    delayDuration={100}
+                                  >
                                     <Button
                                       variant="ghost"
                                       size="icon"
                                       className={cn(
                                         "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                        copiedMessageId === message.id && "bg-emerald-500/10 text-emerald-400 dark:bg-emerald-500/20"
+                                        copiedMessageId === message.id &&
+                                          "bg-emerald-500/10 text-emerald-400 dark:bg-emerald-500/20",
                                       )}
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         handleCopy(message);
                                       }}
-                                      aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message"}
+                                      aria-label={
+                                        copiedMessageId === message.id
+                                          ? "Message copied"
+                                          : "Copy message"
+                                      }
                                     >
-                                      {copiedMessageId === message.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                      {copiedMessageId === message.id ? (
+                                        <Check className="h-4 w-4" />
+                                      ) : (
+                                        <Copy className="h-4 w-4" />
+                                      )}
                                     </Button>
                                   </MessageAction>
 
-                                  <MessageAction tooltip={message.reaction === "upvote" ? "Remove like" : "Mark response as helpful"} delayDuration={100}>
+                                  <MessageAction
+                                    tooltip={
+                                      message.reaction === "upvote"
+                                        ? "Remove like"
+                                        : "Mark response as helpful"
+                                    }
+                                    delayDuration={100}
+                                  >
                                     <Button
                                       variant="ghost"
                                       size="icon"
                                       className={cn(
                                         "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                        message.reaction === "upvote" && "bg-primary/10 text-primary dark:bg-primary/20"
+                                        message.reaction === "upvote" &&
+                                          "bg-primary/10 text-primary dark:bg-primary/20",
                                       )}
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         toggleReaction(message.id, "upvote");
                                       }}
-                                      aria-pressed={message.reaction === "upvote"}
+                                      aria-pressed={
+                                        message.reaction === "upvote"
+                                      }
                                       aria-label="Mark response as helpful"
                                     >
                                       <ThumbsUp className="h-4 w-4" />
                                     </Button>
                                   </MessageAction>
 
-                                  <MessageAction tooltip={message.reaction === "downvote" ? "Remove dislike" : "Mark response as not helpful"} delayDuration={100}>
+                                  <MessageAction
+                                    tooltip={
+                                      message.reaction === "downvote"
+                                        ? "Remove dislike"
+                                        : "Mark response as not helpful"
+                                    }
+                                    delayDuration={100}
+                                  >
                                     <Button
                                       variant="ghost"
                                       size="icon"
                                       className={cn(
                                         "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
-                                        message.reaction === "downvote" && "bg-destructive/10 text-destructive dark:bg-destructive/20"
+                                        message.reaction === "downvote" &&
+                                          "bg-destructive/10 text-destructive dark:bg-destructive/20",
                                       )}
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         toggleReaction(message.id, "downvote");
                                       }}
-                                      aria-pressed={message.reaction === "downvote"}
+                                      aria-pressed={
+                                        message.reaction === "downvote"
+                                      }
                                       aria-label="Mark response as not helpful"
                                     >
                                       <ThumbsDown className="h-4 w-4" />
+                                    </Button>
+                                  </MessageAction>
+
+                                  <MessageAction
+                                    tooltip={
+                                      isSpeaking === message.id
+                                        ? "Stop speaking"
+                                        : "Read aloud"
+                                    }
+                                    delayDuration={100}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                        "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                                        isSpeaking === message.id &&
+                                          "text-primary dark:text-primary-400",
+                                      )}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        speakMessage(message);
+                                      }}
+                                      aria-label={
+                                        isSpeaking === message.id
+                                          ? "Stop speaking"
+                                          : "Read aloud"
+                                      }
+                                    >
+                                      {isSpeaking === message.id ? (
+                                        <VolumeX className="h-4 w-4" />
+                                      ) : (
+                                        <Volume2 className="h-4 w-4" />
+                                      )}
                                     </Button>
                                   </MessageAction>
                                 </MessageActions>
@@ -1229,7 +1920,11 @@ function Chatbot() {
                         key={attachment.id}
                         className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-muted/40 group/attachment animate-in slide-in-from-left-4 duration-300 dark:border-gray-600 dark:bg-gray-700/40"
                       >
-                        <img src={attachment.preview} alt={attachment.name} className="h-full w-full object-cover transition-transform group-hover/attachment:scale-110" />
+                        <img
+                          src={attachment.preview}
+                          alt={attachment.name}
+                          className="h-full w-full object-cover transition-transform group-hover/attachment:scale-110"
+                        />
                         <button
                           type="button"
                           className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white transition-all hover:bg-destructive hover:scale-110 dark:bg-gray-800/90"
@@ -1243,8 +1938,12 @@ function Chatbot() {
                           <X className="h-3 w-3" />
                         </button>
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1 text-[10px] text-white">
-                          <span className="block truncate">{attachment.name}</span>
-                          <span className="opacity-70">{formatFileSize(attachment.size)}</span>
+                          <span className="block truncate">
+                            {attachment.name}
+                          </span>
+                          <span className="opacity-70">
+                            {formatFileSize(attachment.size)}
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -1269,16 +1968,53 @@ function Chatbot() {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <PromptInputAction tooltip="Attach image" side="top">
-                    <Button asChild variant="ghost" size="icon" className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full dark:text-gray-300 dark:hover:bg-gray-600"
+                    >
                       <label className="flex cursor-pointer items-center justify-center transition-all hover:scale-105">
                         <Image className="h-5 w-5" />
                         <span className="sr-only">Attach image</span>
-                        <input type="file" accept="image/*" multiple className="sr-only" onChange={handleImageUpload} />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="sr-only"
+                          onChange={handleImageUpload}
+                        />
                       </label>
                     </Button>
                   </PromptInputAction>
 
-                  <PromptInputAction tooltip="Clear all attachments" side="top" disabled={composerAttachments.length === 0}>
+                  <PromptInputAction
+                    tooltip={isRecording ? "Stop recording" : "Voice input"}
+                    side="top"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={cn(
+                        "rounded-full dark:text-gray-300 dark:hover:bg-gray-600",
+                        isRecording && "text-red-500 animate-pulse",
+                      )}
+                      onClick={toggleVoiceInput}
+                    >
+                      {isRecording ? (
+                        <StopCircle className="h-5 w-5" />
+                      ) : (
+                        <Mic className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </PromptInputAction>
+
+                  <PromptInputAction
+                    tooltip="Clear all attachments"
+                    side="top"
+                    disabled={composerAttachments.length === 0}
+                  >
                     <Button
                       type="button"
                       variant="ghost"
@@ -1294,7 +2030,11 @@ function Chatbot() {
 
                 <PromptInputActions>
                   <PromptInputAction
-                    tooltip={hasPendingInput ? "Send message" : "Type a message to send"}
+                    tooltip={
+                      hasPendingInput
+                        ? "Send message"
+                        : "Type a message to send"
+                    }
                     delayDuration={100}
                   >
                     <Button
@@ -1304,7 +2044,11 @@ function Chatbot() {
                       onClick={handleSubmit}
                       disabled={!hasPendingInput || isGenerating}
                     >
-                      {isGenerating ? <LoadingSpinner size={16} /> : <ArrowUp className="h-4 w-4" />}
+                      {isGenerating ? (
+                        <LoadingSpinner size={16} />
+                      ) : (
+                        <ArrowUp className="h-4 w-4" />
+                      )}
                     </Button>
                   </PromptInputAction>
                 </PromptInputActions>

@@ -1,0 +1,89 @@
+---
+const services = [
+  {
+    title: "Senior Backend Engineer for Hire",
+    description: "Building robust, scalable server-side systems that power your business applications. Specializing in high-performance APIs, microservices architecture, and cloud-native solutions.",
+    keywords: ["Senior Backend Engineer for hire", "Backend Developer", "Server-side Development"],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`
+  },
+  {
+    title: "Freelance Full Stack Developer",
+    description: "End-to-end development services for web and mobile applications. From database design to responsive frontend interfaces, I deliver complete solutions that work seamlessly across all platforms.",
+    keywords: ["Freelance Full Stack Developer", "Full Stack Engineer", "Web Developer"],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+  },
+  {
+    title: "Scalable Systems Consultant",
+    description: "Architecture consulting for systems designed to grow. I help businesses design and implement scalable infrastructures that handle increased load without performance degradation.",
+    keywords: ["Scalable Systems Consultant", "System Architecture", "Scalability Consulting"],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`
+  },
+  {
+    title: "Custom Software Development Services",
+    description: "Tailored software solutions built to address your unique business challenges. From concept to deployment, I create custom applications that streamline operations and drive growth.",
+    keywords: ["Custom Software Development Services", "Software Development", "Custom Software"],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
+  },
+  {
+    title: "AI Automation Expert",
+    description: "Transform your business processes with intelligent automation. I develop AI-powered solutions including custom LLMs, AI agents, and workflow automation systems that reduce manual effort and increase efficiency.",
+    keywords: ["AI Automation Expert", "AI Automation", "AI Agent Development", "LLM Implementation"],
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10h-10V2z"/><path d="M12 12l-7.5 7.5"/><circle cx="12" cy="12" r="2"/></svg>`
+  }
+];
+---
+
+<section class="text-[var(--white)] py-12" id="services">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <div class="text-left space-y-4">
+      <h2 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-4">
+        Services
+      </h2>
+      <p class="text-lg text-[var(--white-icon)] max-w-3xl">
+        Professional software engineering services tailored to help your business grow. 
+        Whether you need a senior backend engineer for hire, a freelance full stack developer, 
+        or an AI automation expert, I deliver solutions that drive results.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      {services.map((service) => (
+        <div class="p-6 bg-[#1414149c] rounded-2xl border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-colors duration-300">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="text-[var(--sec)]" set:html={service.icon} />
+            <h3 class="text-xl font-semibold text-[var(--white)]">
+              {service.title}
+            </h3>
+          </div>
+          <p class="text-[var(--white-icon)] mb-4 leading-relaxed">
+            {service.description}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            {service.keywords.map((keyword) => (
+              <span class="text-xs px-3 py-1 rounded-full bg-[var(--white-icon-tr)] text-[var(--white-icon)]">
+                {keyword}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-8 p-6 bg-[var(--sec)] bg-opacity-10 rounded-2xl border border-[var(--sec)]">
+      <h3 class="text-xl font-semibold text-[var(--white)] mb-3">
+        Ready to Work Together?
+      </h3>
+      <p class="text-[var(--white-icon)] mb-4">
+        I'm currently available for freelance projects and consulting engagements. 
+        Whether you need a senior backend engineer for hire or full stack development services, 
+        let's discuss how I can help bring your project to life.
+      </p>
+      <a 
+        href="#contact" 
+        class="inline-block px-6 py-3 bg-[var(--sec)] text-white font-medium rounded-xl hover:bg-opacity-90 transition duration-300"
+      >
+        Get in Touch
+      </a>
+    </div>
+  </div>
+</section>

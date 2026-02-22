@@ -1229,7 +1229,7 @@ function Chatbot() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "chat-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col shadow-xl transition-transform duration-300 ease-in-out",
+          "chat-sidebar fixed inset-y-0 left-0 z-30 flex w-64 sm:w-72 xl:w-80 flex-col shadow-xl transition-transform duration-300 ease-in-out",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full",
           "lg:static lg:h-full lg:shadow-none",
           isSidebarCollapsed ? "lg:hidden" : "lg:flex lg:translate-x-0",
@@ -1330,13 +1330,13 @@ function Chatbot() {
       {/* Main */}
       <main className="flex h-full flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="chat-header flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-8">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <div className="flex items-center gap-2">
+        <header className="chat-header flex flex-wrap items-center justify-between gap-2 px-3 py-3 sm:px-6">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2">
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 onClick={() => setIsSidebarOpen(true)}
                 aria-label="Open chat history"
               >
@@ -1345,7 +1345,7 @@ function Chatbot() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hidden lg:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="hidden xl:inline-flex text-foreground dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 onClick={() => setIsSidebarCollapsed((v) => !v)}
                 aria-label={
                   isSidebarCollapsed ? "Show sidebar" : "Hide sidebar"
@@ -1359,10 +1359,10 @@ function Chatbot() {
               </Button>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground dark:text-gray-400">
+              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-muted-foreground dark:text-gray-400">
                 Ollama
               </p>
-              <h1 className="truncate text-lg font-semibold text-foreground dark:text-gray-100 sm:text-xl">
+              <h1 className="truncate text-sm sm:text-lg font-semibold text-foreground dark:text-gray-100">
                 {activeConversationTitle}
               </h1>
               <ModelSelector
@@ -1373,8 +1373,7 @@ function Chatbot() {
               />
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <ThemeToggle className="hidden lg:inline-flex" />
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
@@ -1387,7 +1386,7 @@ function Chatbot() {
             >
               <Search className="h-4 w-4" />
             </Button>
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <Button
                 variant="ghost"
                 size="icon"
@@ -1416,7 +1415,7 @@ function Chatbot() {
                 </div>
               )}
             </div>
-            <label className="cursor-pointer">
+            <label className="cursor-pointer hidden sm:block">
               <input
                 type="file"
                 accept=".json"
@@ -1454,6 +1453,7 @@ function Chatbot() {
             >
               <Keyboard className="h-4 w-4" />
             </Button>
+            <ThemeToggle />
           </div>
         </header>
 
@@ -1569,9 +1569,9 @@ function Chatbot() {
         )}
 
         {/* Chat area */}
-        <div className="flex flex-1 flex-col overflow-hidden px-4 pb-6 pt-4 sm:px-8">
+        <div className="flex flex-1 flex-col overflow-hidden px-2 pb-4 pt-2 sm:px-6 sm:pt-4">
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <ChatContainerRoot className="chat-messages-container relative flex min-h-0 flex-1 flex-col p-4 shadow-sm sm:p-6">
+            <ChatContainerRoot className="chat-messages-container relative flex min-h-0 flex-1 flex-col p-3 shadow-sm sm:p-6">
               {isLoadingHistory ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
@@ -1584,28 +1584,26 @@ function Chatbot() {
               ) : (
                 <ChatContainerContent className="flex w-full flex-col gap-6">
                   {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                      <div className="rounded-full bg-primary/10 p-4 mb-4 dark:bg-primary/20">
-                        <Bot className="h-8 w-8 text-primary dark:text-primary-400" />
+                    <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8 sm:py-12">
+                      <div className="rounded-full bg-primary/10 p-3 sm:p-4 mb-4 dark:bg-primary/20">
+                        <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary dark:text-primary-400" />
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground dark:text-gray-100 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground dark:text-gray-100 mb-2">
                         Welcome to Ollama Chat
                       </h3>
-                      <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-md mb-6">
-                        Start a conversation by typing a message below. I'm
+                      <p className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400 max-w-xs sm:max-w-md mb-6">
+                        Start a conversation by typing a message below. I&apos;m
                         powered by your private AI endpoint.
                       </p>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleNewChat}
-                          className="border-border dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          New Chat
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleNewChat}
+                        className="border-border dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        New Chat
+                      </Button>
                     </div>
                   ) : (
                     messages.map((message, index) => {
@@ -1625,7 +1623,7 @@ function Chatbot() {
                         >
                           <div
                             className={cn(
-                              "flex max-w-[38rem] flex-col gap-2",
+                              "flex max-w-[85%] sm:max-w-[75%] md:max-w-[38rem] flex-col gap-2",
                               isUser ? "items-end" : "items-start",
                             )}
                           >
@@ -1684,7 +1682,7 @@ function Chatbot() {
                               )}
 
                               {/* Attachments */}
-                              {message.attachments &&
+                              {Array.isArray(message.attachments) &&
                                 message.attachments.length > 0 && (
                                   <div className="mt-2 grid gap-3 sm:grid-cols-2">
                                     {message.attachments.map((attachment) => (
@@ -1875,7 +1873,7 @@ function Chatbot() {
                   {/* Typing indicator */}
                   {isGenerating && streamingMessageId === null && (
                     <div className="flex justify-start">
-                      <div className="flex max-w-[38rem] flex-col gap-2 items-start">
+                      <div className="flex max-w-[85%] sm:max-w-[75%] md:max-w-[38rem] flex-col gap-2 items-start">
                         <div className="flex items-center gap-2">
                           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-xs font-medium dark:bg-gray-700 dark:text-gray-400">
                             <Bot className="h-3 w-3" />
@@ -1905,7 +1903,7 @@ function Chatbot() {
             onValueChange={setInput}
             onSubmit={handleSubmit}
             isLoading={isGenerating}
-            className="chat-input-container mt-6 mb-4 transition-all duration-200"
+            className="chat-input-container mt-3 mb-2 sm:mt-6 sm:mb-4 transition-all duration-200"
             disabled={isGenerating}
           >
             <div className="flex flex-col gap-3">

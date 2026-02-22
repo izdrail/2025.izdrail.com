@@ -175,7 +175,11 @@
 /* Typography */
 .chat-label {
   color: var(--chat-white-icon) !important;
-  font-family: 'montserrat', -apple-system, system-ui, sans-serif;
+  font-family:
+    "montserrat",
+    -apple-system,
+    system-ui,
+    sans-serif;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -183,7 +187,11 @@
 
 .chat-title {
   color: var(--chat-white) !important;
-  font-family: 'montserrat', -apple-system, system-ui, sans-serif;
+  font-family:
+    "montserrat",
+    -apple-system,
+    system-ui,
+    sans-serif;
   font-weight: 600;
 }
 
@@ -240,4 +248,22 @@
 .chat-empty-state-icon {
   background: var(--chat-hover) !important;
   color: var(--chat-sec) !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .chat-messages-container {
+    border-radius: 16px !important;
+    margin: 0 4px;
+  }
+
+  .chat-sidebar {
+    width: 100% !important;
+  }
+
+  .chat-input-container {
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+    border-radius: 12px !important;
+  }
 }

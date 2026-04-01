@@ -453,7 +453,7 @@ function Chatbot() {
       try {
         setIsLoading(true);
         // You might want to add a models endpoint to your worker
-        const res = await fetch(`https://ai.izdrail.com/api/tags`);
+        const res = await fetch(`/api/models`);
         if (!res.ok) throw new Error("Failed to fetch models");
         const data = await res.json();
         const modelList = (data.models || []).map((m: any) => ({
@@ -681,7 +681,7 @@ function Chatbot() {
 
     try {
       // Still use the external AI service for chat
-      const response = await fetch(`https://ai.izdrail.com/api/chat`, {
+      const response = await fetch(`/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

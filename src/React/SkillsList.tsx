@@ -84,8 +84,9 @@ const SkillsList = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className={`w-6 h-6 text-[var(--white)] transform transition-transform flex-shrink-0 ${openItem === category ? "rotate-180" : ""
-                      }`}
+                    className={`w-6 h-6 text-[var(--white)] transform transition-transform flex-shrink-0 ${
+                      openItem === category ? "rotate-180" : ""
+                    }`}
                   >
                     <path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path>
                   </svg>
@@ -93,17 +94,18 @@ const SkillsList = () => {
               </div>
 
               <div
-                className={`transition-all duration-300 px-4 ${openItem === category
+                className={`transition-all duration-300 px-4 ${
+                  openItem === category
                     ? "max-h-[500px] pb-4 opacity-100"
                     : "max-h-0 opacity-0"
-                  }`}
+                }`}
               >
-                <ul className="space-y-2 text-[var(--white-icon)] text-sm">
+                <ul className="space-y-2 text-[var(--white-icon)] text-sm list-none">
                   {items.map((item, index) => (
-                    <div key={index} className="flex items-center">
-                      <span className="pl-1">•</span>
-                      <li className="pl-3">{item}</li>
-                    </div>
+                    <li key={index} className="pl-3 flex items-center">
+                      <span className="mr-3">•</span>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>

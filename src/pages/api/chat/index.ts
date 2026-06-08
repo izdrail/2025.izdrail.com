@@ -1,13 +1,13 @@
 import type { APIRoute } from "astro";
 
-const OLLAMA_URL = import.meta.env.OLLAMA_URL || "https://ai.izdrail.com";
+const AI_URL = import.meta.env.AI_URL || "https://ai.izdrail.com";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { messages, model = "llama3.2:1b" } = body;
+    const { messages, model = "default" } = body;
 
-    const response = await fetch(`${OLLAMA_URL}/api/chat`, {
+    const response = await fetch(`${AI_URL}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     if (!response.ok) {
-      return new Response(`{"error": "Ollama API error: ${response.status}"}`, {
+      return new Response(`{"error": "AI API error: ${response.status}"}`, {
         status: response.status,
         headers: {
           "Content-Type": "application/x-ndjson",
@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error) {
     console.error("Chat API error:", error);
     return new Response(
-      `{"error": "Failed to connect to Ollama: ${(error as Error).message}"}`,
+      `{"error": "Failed to connect to AI: ${(error as Error).message}"}`,
       {
         status: 500,
         headers: {

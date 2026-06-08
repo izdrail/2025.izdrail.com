@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
-import { CodeBlock, CodeBlockCode } from "./code-block";
+import { CodeBlock, CodeBlockCode, CodeBlockHeader } from "./code-block";
 
 type MarkdownProps = {
   children: string;
@@ -30,12 +30,16 @@ function extractLanguage(className?: string): string {
 const INITIAL_COMPONENTS: Partial<Components> = {
   code({ className, children, ...props }) {
     const isInline =
-      !props.node?.position?.start.line || props.node?.position?.start.line === props.node?.position?.end.line;
+      !props.node?.position?.start.line ||
+      props.node?.position?.start.line === props.node?.position?.end.line;
 
     if (isInline) {
       return (
         <span
-          className={cn("rounded-sm bg-primary-foreground px-1 font-mono text-sm", className)}
+          className={cn(
+            "rounded-sm bg-primary-foreground px-1 font-mono text-sm",
+            className,
+          )}
           {...props}
         >
           {children}
@@ -47,6 +51,7 @@ const INITIAL_COMPONENTS: Partial<Components> = {
 
     return (
       <CodeBlock className={className}>
+        <CodeBlockHeader language={language} />
         <CodeBlockCode code={String(children)} language={language} />
       </CodeBlock>
     );
@@ -61,21 +66,35 @@ type MarkdownBlockProps = {
   components?: Partial<Components>;
 };
 
-const MemoizedMarkdownBlock = memo(function MarkdownBlock({ content, components = INITIAL_COMPONENTS }: MarkdownBlockProps) {
+const MemoizedMarkdownBlock = memo(function MarkdownBlock({
+  content,
+  components = INITIAL_COMPONENTS,
+}: MarkdownBlockProps) {
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={components}>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkBreaks]}
+      components={components}
+    >
       {content}
     </ReactMarkdown>
   );
 }, areMarkdownBlockPropsEqual);
 
-function areMarkdownBlockPropsEqual(prevProps: MarkdownBlockProps, nextProps: MarkdownBlockProps) {
+function areMarkdownBlockPropsEqual(
+  prevProps: MarkdownBlockProps,
+  nextProps: MarkdownBlockProps,
+) {
   return prevProps.content === nextProps.content;
 }
 
 MemoizedMarkdownBlock.displayName = "MemoizedMarkdownBlock";
 
-function MarkdownComponent({ children, id, className, components = INITIAL_COMPONENTS }: MarkdownProps) {
+function MarkdownComponent({
+  children,
+  id,
+  className,
+  components = INITIAL_COMPONENTS,
+}: MarkdownProps) {
   const generatedId = useId();
   const blockId = id ?? generatedId;
   const blocks = useMemo(() => parseMarkdownIntoBlocks(children), [children]);
@@ -83,7 +102,11 @@ function MarkdownComponent({ children, id, className, components = INITIAL_COMPO
   return (
     <div className={className}>
       {blocks.map((block, index) => (
-        <MemoizedMarkdownBlock key={`${blockId}-block-${index}`} content={block} components={components} />
+        <MemoizedMarkdownBlock
+          key={`${blockId}-block-${index}`}
+          content={block}
+          components={components}
+        />
       ))}
     </div>
   );

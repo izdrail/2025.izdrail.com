@@ -41,7 +41,6 @@ import {
   ThumbsDown,
   ThumbsUp,
   X,
-  Cpu,
   Plus,
   Loader2,
   Bot,
@@ -49,7 +48,6 @@ import {
   Download,
   Trash2,
   Mic,
-  MicOff,
   Volume2,
   VolumeX,
   Search,
@@ -58,7 +56,6 @@ import {
   FileUp,
   Keyboard,
   StopCircle,
-  FolderOpen,
 } from "lucide-react";
 
 type Role = "user" | "assistant";
@@ -106,8 +103,8 @@ const historySeed: HistoryGroup[] = [
     conversations: [
       {
         id: "today-1",
-        title: "Chat with Ollama",
-        preview: "Powered by your private AI endpoint.",
+        title: "Chat",
+        preview: "Start a conversation.",
         timestamp: "Just now",
       },
     ],
@@ -178,8 +175,8 @@ function createPlaceholderConversation(
     {
       id: createId(),
       role: "assistant",
-      name: "Ollama",
-      avatarFallback: "OL",
+      name: "Assistant",
+      avatarFallback: "AI",
       markdown: true,
       reaction: null,
       content: `Placeholder for **${title}**. ${preview}`,
@@ -238,9 +235,9 @@ async function apiGetMessages(
       return data.map((msg) => ({
         id: msg.id,
         role: msg.role as Role,
-        name: msg.name || (msg.role === "user" ? "You" : "Ollama"),
+        name: msg.name || (msg.role === "user" ? "You" : "Assistant"),
         avatarFallback:
-          msg.avatarFallback || (msg.role === "user" ? "YO" : "OL"),
+          msg.avatarFallback || (msg.role === "user" ? "YO" : "AI"),
         content: msg.content || "",
         markdown: msg.markdown ?? msg.role === "assistant",
         attachments: msg.attachments ? JSON.parse(msg.attachments) : undefined,
@@ -319,43 +316,6 @@ const TypingIndicator = () => (
   </div>
 );
 
-// Model selector component
-const ModelSelector = ({
-  models,
-  selectedModel,
-  onModelChange,
-  isLoading = false,
-}: {
-  models: { id: string; name: string }[];
-  selectedModel: string;
-  onModelChange: (model: string) => void;
-  isLoading?: boolean;
-}) => (
-  <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-muted/50">
-    {isLoading ? (
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <LoadingSpinner size={12} />
-        Loading models...
-      </div>
-    ) : (
-      <>
-        <Cpu className="h-3 w-3 text-muted-foreground" />
-        <select
-          value={selectedModel}
-          onChange={(e) => onModelChange(e.target.value)}
-          className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 text-muted-foreground"
-        >
-          {models.map((model) => (
-            <option key={model.id} value={model.id}>
-              {model.name}
-            </option>
-          ))}
-        </select>
-      </>
-    )}
-  </div>
-);
-
 // Safe Markdown content component
 const SafeMarkdownContent = ({
   content,
@@ -389,12 +349,11 @@ function Chatbot() {
       {
         id: createId(),
         role: "assistant",
-        name: "Ollama",
-        avatarFallback: "OL",
+        name: "Assistant",
+        avatarFallback: "AI",
         markdown: true,
         reaction: null,
-        content:
-          "Hello! I'm running on your private Ollama instance. Ask me anything!",
+        content: "Hello! How can I help you today?",
         timestamp: new Date(),
       },
     ];
@@ -410,11 +369,8 @@ function Chatbot() {
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [models, setModels] = useState<{ id: string; name: string }[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>("llama3.2:1b");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null,
@@ -446,32 +402,6 @@ function Chatbot() {
     input.trim().length > 0 || composerAttachments.length > 0;
 
   /* -------------------------
-     Fetch models
-  ------------------------- */
-  useEffect(() => {
-    const fetchModels = async () => {
-      try {
-        setIsLoading(true);
-        // You might want to add a models endpoint to your worker
-        const res = await fetch(`/api/models`);
-        if (!res.ok) throw new Error("Failed to fetch models");
-        const data = await res.json();
-        const modelList = (data.models || []).map((m: any) => ({
-          id: m.name,
-          name: m.name,
-        }));
-        setModels(modelList);
-        if (modelList.length > 0) setSelectedModel(modelList[0].id);
-      } catch {
-        setModels([{ id: "llama3.2:1b", name: "llama3.2:1b" }]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchModels();
-  }, []);
-
-  /* -------------------------
      Load initial conversations
   ------------------------- */
   useEffect(() => {
@@ -495,11 +425,11 @@ function Chatbot() {
               {
                 id: createId(),
                 role: "assistant",
-                name: "Ollama",
-                avatarFallback: "OL",
+                name: "Assistant",
+                avatarFallback: "AI",
                 markdown: true,
                 reaction: null,
-                content: "Hello! I'm running on your private Ollama instance.",
+                content: "Hello! How can I help you today?",
                 timestamp: new Date(),
               },
             ],
@@ -685,7 +615,6 @@ function Chatbot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: selectedModel,
           messages: chatHistory,
           stream: true,
         }),
@@ -707,8 +636,8 @@ function Chatbot() {
         {
           id: assistantMessageId,
           role: "assistant",
-          name: "Ollama",
-          avatarFallback: "OL",
+          name: "Assistant",
+          avatarFallback: "AI",
           markdown: true,
           reaction: null,
           content: "",
@@ -768,8 +697,8 @@ function Chatbot() {
         id: assistantMessageId,
         conversation_id: activeConversationId,
         role: "assistant",
-        name: "Ollama",
-        avatarFallback: "OL",
+        name: "Assistant",
+        avatarFallback: "AI",
         content: assistantContent,
         markdown: true,
         attachments: null,
@@ -780,8 +709,8 @@ function Chatbot() {
       const errorMessage: ConversationMessage = {
         id: createId(),
         role: "assistant",
-        name: "Ollama",
-        avatarFallback: "OL",
+        name: "Assistant",
+        avatarFallback: "AI",
         markdown: false,
         reaction: null,
         content: "⚠️ Failed to reach AI. Check your connection.",
@@ -795,8 +724,8 @@ function Chatbot() {
         id: errorMessage.id,
         conversation_id: activeConversationId,
         role: "assistant",
-        name: "Ollama",
-        avatarFallback: "OL",
+        name: "Assistant",
+        avatarFallback: "AI",
         content: errorMessage.content,
         markdown: false,
         attachments: null,
@@ -847,8 +776,8 @@ function Chatbot() {
     const initialAssistant: ConversationMessage = {
       id: createId(),
       role: "assistant",
-      name: "Ollama",
-      avatarFallback: "OL",
+      name: "Assistant",
+      avatarFallback: "AI",
       markdown: true,
       reaction: null,
       content: "New chat started. How can I help you today?",
@@ -863,8 +792,8 @@ function Chatbot() {
       id: initialAssistant.id,
       conversation_id: conversationId,
       role: "assistant",
-      name: "Ollama",
-      avatarFallback: "OL",
+      name: "Assistant",
+      avatarFallback: "AI",
       content: initialAssistant.content,
       markdown: true,
       attachments: null,
@@ -1360,17 +1289,11 @@ function Chatbot() {
             </div>
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-muted-foreground dark:text-gray-400">
-                Ollama
+                AI Chat
               </p>
               <h1 className="truncate text-sm sm:text-lg font-semibold text-foreground dark:text-gray-100">
                 {activeConversationTitle}
               </h1>
-              <ModelSelector
-                models={models}
-                selectedModel={selectedModel}
-                onModelChange={setSelectedModel}
-                isLoading={isLoading}
-              />
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -1589,11 +1512,10 @@ function Chatbot() {
                         <Bot className="h-6 w-6 sm:h-8 sm:w-8 text-primary dark:text-primary-400" />
                       </div>
                       <h3 className="text-base sm:text-lg font-semibold text-foreground dark:text-gray-100 mb-2">
-                        Welcome to Ollama Chat
+                        AI Chat
                       </h3>
                       <p className="text-xs sm:text-sm text-muted-foreground dark:text-gray-400 max-w-xs sm:max-w-md mb-6">
-                        Start a conversation by typing a message below. I&apos;m
-                        powered by your private AI endpoint.
+                        Start a conversation by typing a message below.
                       </p>
                       <Button
                         variant="outline"
@@ -1879,7 +1801,7 @@ function Chatbot() {
                             <Bot className="h-3 w-3" />
                           </div>
                           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground dark:text-gray-400">
-                            Ollama
+                            Assistant
                           </span>
                         </div>
                         <TypingIndicator />
@@ -1952,7 +1874,7 @@ function Chatbot() {
               <div className="relative">
                 <PromptInputTextarea
                   aria-label="Message"
-                  placeholder="Message Ollama..."
+                  placeholder="Message..."
                   onPaste={handlePasteImages}
                   className="chat-input-textarea pr-12 min-h-[60px]"
                 />

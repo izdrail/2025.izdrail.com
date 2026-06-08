@@ -1,17 +1,16 @@
 import type { APIRoute } from "astro";
 
-const OLLAMA_URL = import.meta.env.OLLAMA_URL || "https://ai.izdrail.com";
+const AI_URL = import.meta.env.AI_URL || "https://ai.izdrail.com";
 
 export const GET: APIRoute = async () => {
   try {
-    const response = await fetch(`${OLLAMA_URL}/api/tags`);
+    const response = await fetch(`${AI_URL}/api/tags`);
 
     if (!response.ok) {
-      return new Response(`{"error": "Ollama API error: ${response.status}"}`, {
+      return new Response(`{"error": "AI API error: ${response.status}"}`, {
         status: response.status,
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
         },
       });
     }
@@ -26,7 +25,7 @@ export const GET: APIRoute = async () => {
   } catch (error) {
     console.error("Models API error:", error);
     return new Response(
-      `{"error": "Failed to connect to Ollama: ${(error as Error).message}"}`,
+      `{"error": "Failed to connect to AI: ${(error as Error).message}"}`,
       {
         status: 500,
         headers: {

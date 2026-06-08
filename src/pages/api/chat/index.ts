@@ -5,7 +5,7 @@ const AI_URL = import.meta.env.AI_URL || "https://ai.izdrail.com";
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { messages, model = "default" } = body;
+    const { messages, model = "mistral:7b" } = body;
 
     const response = await fetch(`${AI_URL}/api/chat`, {
       method: "POST",

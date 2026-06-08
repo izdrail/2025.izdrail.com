@@ -60,6 +60,10 @@ import {
 
 type Role = "user" | "assistant";
 
+type ModelOption = {
+  name: string;
+};
+
 type Attachment = {
   id: string;
   name: string;
@@ -384,6 +388,9 @@ function Chatbot() {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [availableModels, setAvailableModels] = useState<ModelOption[]>([]);
+  const [selectedModel, setSelectedModel] = useState("mistral:7b");
+  const [isLoadingModels, setIsLoadingModels] = useState(true);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -461,7 +468,31 @@ function Chatbot() {
   }, []);
 
   /* -------------------------
-     Update conversation messages
+      Fetch available models
+  ------------------------- */
+  useEffect(() => {
+    async function fetchModels() {
+      try {
+        const res = await fetch("/api/models");
+        if (!res.ok) return;
+        const data = await res.json();
+        const models: ModelOption[] = (data.models || []).map(
+          (m: { name: string }) => ({ name: m.name }),
+        );
+        if (models.length > 0) {
+          setAvailableModels(models);
+        }
+      } catch {
+        // keep default
+      } finally {
+        setIsLoadingModels(false);
+      }
+    }
+    fetchModels();
+  }, []);
+
+  /* -------------------------
+      Update conversation messages
   ------------------------- */
   const updateConversationMessages = (
     conversationId: string,
@@ -616,6 +647,7 @@ function Chatbot() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: chatHistory,
+          model: selectedModel,
           stream: true,
         }),
       });
@@ -1294,6 +1326,24 @@ function Chatbot() {
               <h1 className="truncate text-sm sm:text-lg font-semibold text-foreground dark:text-gray-100">
                 {activeConversationTitle}
               </h1>
+            </div>
+            <div className="chat-model-selector flex items-center">
+              {isLoadingModels ? (
+                <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+              ) : availableModels.length > 0 ? (
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                  className="text-xs py-1 px-2 rounded-md border border-border bg-background text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                  aria-label="Select model"
+                >
+                  {availableModels.map((m) => (
+                    <option key={m.name} value={m.name}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
             </div>
           </div>
           <div className="flex items-center gap-1">

@@ -416,3 +416,11 @@
   .chat-container header h1, .chat-container .chat-header h1 { font-size: .875rem !important; }
   .chat-model-selector select { max-width: 8rem; }
 }
+
+@media (max-width: 767px) {
+  .chat-header { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .chat-header > div:first-child { width: 100%; }
+  .chat-header > div:last-child { justify-content: flex-end; }
+  .chat-model-selector { margin-left: auto; }
+  .chat-header > div:first-child > div:nth-child(2) { flex-shrink: 0; }
+}

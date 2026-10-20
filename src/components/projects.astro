@@ -93,8 +93,8 @@ const projects: Project[] = [
                   />
                 )}
               </div>
-              <div class="flex items-start px-3">
-                <div class="flex-grow">
+              <div class="flex flex-col sm:flex-row items-start gap-3 px-3">
+                <div class="flex-grow min-w-0">
                   <h4 class="text-2xl font-semibold mb-1">{project.title}</h4>
                   <span class="block text-sm text-[var(--sec)] mb-2">
                     {project.status}
@@ -105,7 +105,7 @@ const projects: Project[] = [
                     </p>
                   )}
                 </div>
-                <div class="flex gap-2 ml-4">
+                <div class="flex gap-2 sm:ml-4 shrink-0">
                   <a
                     target="_blank"
                     href={project.link}

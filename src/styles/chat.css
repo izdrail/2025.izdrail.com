@@ -405,3 +405,14 @@
     border-radius: 12px !important;
   }
 }
+
+/* Override the portfolio's global heading scale inside the compact chat toolbar. */
+.chat-container header h1, .chat-container .chat-header h1 {
+  font-size: 1.125rem !important;
+  line-height: 1.5rem !important;
+}
+.chat-model-selector select { max-width: 16rem; }
+@media (max-width: 767px) {
+  .chat-container header h1, .chat-container .chat-header h1 { font-size: .875rem !important; }
+  .chat-model-selector select { max-width: 8rem; }
+}

@@ -9,7 +9,7 @@ import "@/styles/chat.css";
   <Nav />
   <main>
     <div class="chat-page-container">
-      <Chatbot client:load />
+      <Chatbot client:only="react" />
     </div>
   </main>
 </Layout>
@@ -17,7 +17,12 @@ import "@/styles/chat.css";
 <style>
   .chat-page-container {
     width: 100%;
-    height: calc(100vh - 80px);
+    height: calc(100dvh - 100px);
+    margin-top: 96px;
     background: var(--background);
   }
+</style>
+
+<style>
+@media (max-width: 767px) { .chat-page-container { margin-top: 0; height: calc(100dvh - 90px); } }
 </style>

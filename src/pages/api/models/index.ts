@@ -1,49 +1,19 @@
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro';
+import { LLM_URL, jsonError } from '../../../lib/llm';
 
-const AI_URL = import.meta.env.AI_URL || "https://ai.izdrail.com";
-
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ locals }) => {
+  const key = locals.runtime.env.LLM_API_KEY;
+  if (!key) return jsonError('Chat is not configured yet.', 503);
   try {
-    const response = await fetch(`${AI_URL}/api/tags`);
-
-    if (!response.ok) {
-      return new Response(`{"error": "AI API error: ${response.status}"}`, {
-        status: response.status,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
-
-    const data = await response.json();
-    return new Response(JSON.stringify(data), {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
+    const response = await fetch(`${LLM_URL}/models`, {
+      headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(20000),
     });
-  } catch (error) {
-    console.error("Models API error:", error);
-    return new Response(
-      `{"error": "Failed to connect to AI: ${(error as Error).message}"}`,
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      },
-    );
+    if (!response.ok) return jsonError('The model list is temporarily unavailable.');
+    const data = await response.json() as { data?: { id: string }[] };
+    return new Response(JSON.stringify({ models: (data.data || []).map(m => ({ name: m.id })) }), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    });
+  } catch {
+    return jsonError('The model list is temporarily unavailable.');
   }
-};
-
-export const OPTIONS: APIRoute = async () => {
-  return new Response(null, {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
 };

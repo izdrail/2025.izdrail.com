@@ -5,6 +5,7 @@ type D1Database = import("@cloudflare/workers-types").D1Database;
 
 interface Env {
     DB: D1Database;
+    LLM_API_KEY?: string;
 }
 
 declare namespace App {

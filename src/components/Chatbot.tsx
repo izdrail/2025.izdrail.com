@@ -389,7 +389,7 @@ function Chatbot() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [availableModels, setAvailableModels] = useState<ModelOption[]>([]);
-  const [selectedModel, setSelectedModel] = useState("mistral:7b");
+  const [selectedModel, setSelectedModel] = useState("auto");
   const [isLoadingModels, setIsLoadingModels] = useState(true);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -481,6 +481,7 @@ function Chatbot() {
         );
         if (models.length > 0) {
           setAvailableModels(models);
+          setSelectedModel(current => models.some(m => m.name === current) ? current : models[0].name);
         }
       } catch {
         // keep default
@@ -652,7 +653,10 @@ function Chatbot() {
         }),
       });
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        const details = await response.json().catch(() => ({}));
+        throw new Error(details.error || `HTTP ${response.status}`);
+      }
       if (!response.body) throw new Error("ReadableStream not supported");
 
       const reader = response.body.getReader();
@@ -737,7 +741,7 @@ function Chatbot() {
       });
 
       refreshHistoryPreview(activeConversationId, assistantContent);
-    } catch {
+    } catch (error) {
       const errorMessage: ConversationMessage = {
         id: createId(),
         role: "assistant",
@@ -745,7 +749,7 @@ function Chatbot() {
         avatarFallback: "AI",
         markdown: false,
         reaction: null,
-        content: "⚠️ Failed to reach AI. Check your connection.",
+        content: error instanceof Error ? error.message : "The AI service could not answer. Please try again.",
         timestamp: new Date(),
       };
       updateConversationMessages(activeConversationId, (curr) => [

@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/nav.astro";
+import Footer from "../../components/footer.astro";
 import { getCollection, render } from "astro:content";
 
 export const prerender = true;
@@ -17,6 +19,7 @@ const { Content } = await render(post);
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
+  <Nav />
   <main class="min-h-screen pt-24 md:pt-28 pb-24 px-4">
     <article class="max-w-3xl mx-auto">
       <time
@@ -44,4 +47,5 @@ const { Content } = await render(post);
       </p>
     </article>
   </main>
+  <Footer />
 </Layout>

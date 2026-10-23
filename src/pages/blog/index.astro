@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/nav.astro";
+import Footer from "../../components/footer.astro";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
@@ -11,6 +13,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   title="Blog - izdrail.com"
   description="Notes and funny takes on tech news, from a backend developer who has been building software since 2010."
 >
+  <Nav />
   <main class="min-h-screen pt-24 md:pt-28 pb-24 px-4">
     <div class="max-w-3xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold text-[var(--white)]">Blog</h1>
@@ -51,4 +54,5 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
       }
     </div>
   </main>
+  <Footer />
 </Layout>

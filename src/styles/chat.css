@@ -1,12 +1,13 @@
 /* Chat page custom styles matching izdrail.com design */
 
 :root {
-  --chat-background: #101010;
+  /* Match the portfolio palette (Layout.astro): deep navy + lavender accent */
+  --chat-background: #050816;
   --chat-sec: #a476ff;
   --chat-white: #dfdfdf;
   --chat-white-icon: #f3f3f398;
   --chat-white-icon-tr: #f3f3f310;
-  --chat-card-bg: #1414149c;
+  --chat-card-bg: #0c142a99;
   --chat-border: #f3f3f320;
   --chat-hover: #a476ff20;
 }

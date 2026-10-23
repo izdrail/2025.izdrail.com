@@ -144,7 +144,7 @@ void main() {
 
 const MODES: { id: Mode | "az"; label: string }[] = [
   { id: "domain", label: "By domain" },
-  { id: "family", label: "By paradigm" },
+  { id: "family", label: "By family" },
   { id: "az", label: "A-Z" },
 ];
 

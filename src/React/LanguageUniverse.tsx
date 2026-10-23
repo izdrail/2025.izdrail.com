@@ -620,7 +620,7 @@ export default function LanguageUniverse() {
           className="h-2.5 w-2.5 rounded-full"
           style={{ backgroundColor: ACCENT }}
         />
-        <span className="text-[11px] text-[var(--white-icon)]">his stack</span>
+        <span className="text-[11px] text-[var(--white-icon)]">My stack</span>
       </div>
     </div>
   );

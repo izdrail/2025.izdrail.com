@@ -935,11 +935,8 @@ function Chatbot() {
      Keyboard shortcuts
   ------------------------- */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        handleSubmit();
-      }
+    // Global: dialog dismissal and search opening work regardless of focus.
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (isSearchOpen) {
           setIsSearchOpen(false);
@@ -953,6 +950,16 @@ function Chatbot() {
         setIsSearchOpen(true);
         setTimeout(() => searchInputRef.current?.focus(), 100);
       }
+    };
+
+    // Composer-scoped: submit, new chat and voice only from the message box,
+    // and never while the shortcuts dialog is open.
+    const handleComposerKeyDown = (e: KeyboardEvent) => {
+      if (showShortcuts) return;
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleSubmit();
+      }
       if ((e.metaKey || e.ctrlKey) && e.key === "n") {
         e.preventDefault();
         handleNewChat();
@@ -963,9 +970,13 @@ function Chatbot() {
       }
     };
 
+    window.addEventListener("keydown", handleGlobalKeyDown);
     const textarea = textareaRef.current;
-    textarea?.addEventListener("keydown", handleKeyDown);
-    return () => textarea?.removeEventListener("keydown", handleKeyDown);
+    textarea?.addEventListener("keydown", handleComposerKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeyDown);
+      textarea?.removeEventListener("keydown", handleComposerKeyDown);
+    };
   }, [isSearchOpen, showShortcuts, isGenerating, hasPendingInput]);
 
   /* -------------------------

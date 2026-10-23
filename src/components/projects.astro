@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 interface Project {
   title: string;
   image: ImageMetadata | string;
@@ -29,27 +31,22 @@ const projects: Project[] = [
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My works</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8">Projects</h3>
 
-    <div
-      class:list={[
-        "grid grid-cols-1 gap-8",
-        projects.length > 1 ? "md:grid-cols-2" : "md:max-w-2xl md:mx-auto",
-      ]}
-    >
+    <div class="grid grid-cols-1 gap-8 md:max-w-4xl md:mx-auto">
       {
         projects.map((project) => (
-          <div class="group">
-            <a
-              href={project.preview ?? project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block"
-            >
-              <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-4 bg-[#1a1a1a]">
+          <div class="group rounded-2xl border border-[var(--white-icon-tr)] bg-[var(--card)] overflow-hidden hover:border-[var(--sec)]/50 transition-colors duration-300">
+            <div class="flex flex-col md:flex-row">
+              <a
+                href={project.preview ?? project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block md:w-2/5 shrink-0 overflow-hidden"
+              >
                 {typeof project.image === "string" ? (
                   <img
                     src={project.image}
                     alt={project.title}
-                    class="w-full h-48 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                    class="w-full h-52 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                 ) : (
@@ -59,60 +56,62 @@ const projects: Project[] = [
                     inferSize={false}
                     src={project.image}
                     alt={project.title}
-                    class="w-full h-48 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                    class="w-full h-52 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 )}
-              </div>
-              <div class="flex flex-col sm:flex-row items-start gap-3 px-3">
-                <div class="flex-grow min-w-0">
-                  <h4 class="text-2xl font-semibold mb-1">{project.title}</h4>
-                  <span class="block text-sm text-[var(--sec)] mb-2">
-                    {project.status}
-                  </span>
-                  {project.description && (
-                    <p class="text-sm text-[var(--white-icon)]">
-                      {project.description}
-                    </p>
-                  )}
-                </div>
-                <div class="flex gap-2 sm:ml-4 shrink-0">
-                  <a
-                    target="_blank"
-                    href={project.link}
-                    aria-label={`View ${project.title} on GitHub`}
-                    class="size-12 flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
-                    onclick={(e: Event) => e.stopPropagation()}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="size-5"
+              </a>
+              <div class="flex-1 p-6 md:p-8 flex flex-col justify-center">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <h4 class="text-2xl font-semibold mb-1">{project.title}</h4>
+                    <span class="block text-sm text-[var(--sec)] mb-3">
+                      {project.status}
+                    </span>
+                  </div>
+                  <div class="flex gap-2 shrink-0">
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={project.link}
+                      aria-label={`View ${project.title} on GitHub`}
+                      class="size-11 flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#ffffff08] hover:bg-[var(--white-icon-tr)]"
                     >
-                      <path d="M24 12L18.3431 17.6569L16.9289 16.2426L21.1716 12L16.9289 7.75736L18.3431 6.34315L24 12ZM2.82843 12L7.07107 16.2426L5.65685 17.6569L0 12L5.65685 6.34315L7.07107 7.75736L2.82843 12ZM9.78845 21H7.66009L14.2116 3H16.3399L9.78845 21Z" />
-                    </svg>
-                  </a>
-                  {project.preview && (
-                  <a
-                    target="_blank"
-                    href={project.preview}
-                    aria-label={`Visit ${project.title}`}
-                    class="size-12 flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
-                    onclick={(e: Event) => e.stopPropagation()}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="size-5"
-                    >
-                      <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z" />
-                    </svg>
-                  </a>
-                  )}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="size-5"
+                      >
+                        <path d="M24 12L18.3431 17.6569L16.9289 16.2426L21.1716 12L16.9289 7.75736L18.3431 6.34315L24 12ZM2.82843 12L7.07107 16.2426L5.65685 17.6569L0 12L5.65685 6.34315L7.07107 7.75736L2.82843 12ZM9.78845 21H7.66009L14.2116 3H16.3399L9.78845 21Z" />
+                      </svg>
+                    </a>
+                    {project.preview && (
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={project.preview}
+                        aria-label={`Visit ${project.title}`}
+                        class="size-11 flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#ffffff08] hover:bg-[var(--white-icon-tr)]"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="size-5"
+                        >
+                          <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
                 </div>
+                {project.description && (
+                  <p class="text-sm text-[var(--white-icon)] leading-relaxed">
+                    {project.description}
+                  </p>
+                )}
               </div>
-            </a>
+            </div>
           </div>
         ))
       }
@@ -121,7 +120,7 @@ const projects: Project[] = [
       target="_blank"
       href="https://github.com/izdrail"
       aria-label="View more projects on GitHub"
-      class="w-full flex items-center justify-center gap-2 mt-9 text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-4 rounded-full bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+      class="w-full flex items-center justify-center gap-2 mt-9 text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-4 rounded-full bg-[var(--card)] hover:bg-[var(--white-icon-tr)]"
     >
       <span class="md:text-lg text-md font-medium">More projects on</span>
       <svg

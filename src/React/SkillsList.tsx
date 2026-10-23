@@ -28,7 +28,7 @@ const CategoryIcons = {
       fill="currentColor"
       className="w-6 h-6 text-[var(--sec)] opacity-70"
     >
-      <path d="M7 4V20H17V4H7ZM6 2H18C18.5523 2 19 2.44772 19 3V21C19 21.5523 18.5523 22 18 22H6C5.44772 22 5 21.5523 5 21V3C5 2.44772 5.44772 2 6 2ZM12 17C12.5523 17 13 17.4477 13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17Z"></path>
+      <path d="M9 2V4H6C4.89543 4 4 4.89543 4 6V9H2V11H4V13H2V15H4V18C4 19.1046 4.89543 20 6 20H9V22H11V20H13V22H15V20H18C19.1046 20 20 19.1046 20 18V15H22V13H20V11H22V9H20V6C20 4.89543 19.1046 4 18 4H15V2H13V4H11V2H9ZM6 6H18V18H6V6ZM9 9H15V15H9V9Z"></path>
     </svg>
   ),
 };
@@ -70,10 +70,12 @@ const SkillsList = () => {
           <li key={category} className="w-full">
             <div
               onClick={() => toggleItem(category)}
-              className="md:w-[400px] w-full bg-[#1414149c] rounded-2xl text-left hover:bg-opacity-80 transition-all border border-[var(--white-icon-tr)] cursor-pointer overflow-hidden"
+              className="md:w-[400px] w-full bg-[var(--card)] rounded-2xl text-left hover:bg-opacity-80 transition-all border border-[var(--white-icon-tr)] cursor-pointer overflow-hidden"
             >
               <div className="flex items-center gap-3 p-4">
-                {CategoryIcons[category]}
+                <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg border border-[var(--white-icon-tr)] bg-[#ffffff08]">
+                  {CategoryIcons[category]}
+                </div>
                 <div className="flex items-center gap-2 flex-grow justify-between">
                   <div className="min-w-0 max-w-[200px] md:max-w-none overflow-hidden">
                     <span className="block truncate text-[var(--white)] text-lg">

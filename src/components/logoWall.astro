@@ -1,71 +1,44 @@
 ---
 const technologies = [
-  "astro",
-  "react",
-  "typeScript",
-  "tailwindcss",
-  "nodejs",
-  "HTML5",
-  "CSS3",
-  "javaScript",
-  "git",
-  "supabase",
-  "mysql",
-  "bash",
-  "php",
-  "python",
-  "golang",
-  "laravel",
+  { id: "astro", label: "Astro" },
+  { id: "react", label: "React" },
+  { id: "typeScript", label: "TypeScript" },
+  { id: "tailwindcss", label: "Tailwind CSS" },
+  { id: "nodejs", label: "Node.js" },
+  { id: "HTML5", label: "HTML" },
+  { id: "CSS3", label: "CSS" },
+  { id: "javaScript", label: "JavaScript" },
+  { id: "git", label: "Git" },
+  { id: "supabase", label: "Supabase" },
+  { id: "mysql", label: "MySQL" },
+  { id: "bash", label: "Bash" },
+  { id: "php", label: "PHP" },
+  { id: "python", label: "Python" },
+  { id: "golang", label: "Go" },
+  { id: "laravel", label: "Laravel" },
 ];
 ---
 
-<div class="relative overflow-x-hidden py-8">
+<div class="py-6">
   <div
-    class="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[var(--background)] to-transparent z-20"
+    class="flex flex-wrap items-center justify-center gap-x-7 gap-y-4 max-w-4xl mx-auto"
   >
-  </div>
-  <div
-    class="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[var(--background)] to-transparent z-20"
-  >
-  </div>
-
-  <div class="flex animate-scroll hover:animate-paused gap-12 md:gap-20 w-max">
     {
-      [...technologies, ...technologies, ...technologies].map((tech) => (
+      technologies.map((tech) => (
         <div class="flex items-center gap-2 group transition-all duration-300">
           <img
-            src={`/svg/${tech}.svg`}
-            alt={tech}
-            class="h-7 w-auto object-contain transition-transform group-hover:scale-110 opacity-60"
-            width="30"
-            height="30"
+            src={`/svg/${tech.id}.svg`}
+            alt={tech.label}
+            class="h-6 w-auto object-contain transition-transform group-hover:scale-110 opacity-80"
+            width="26"
+            height="26"
             loading="lazy"
           />
-          <span class="text-lg font-medium text-[var(--white-icon)]">
-            {tech.charAt(0).toUpperCase() + tech.slice(1)}
+          <span class="text-sm font-medium text-[var(--white-icon)] group-hover:text-[var(--white)] transition-colors">
+            {tech.label}
           </span>
         </div>
       ))
     }
   </div>
 </div>
-
-<style is:global>
-  @keyframes scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  .animate-scroll {
-    animation: scroll 60s linear infinite;
-  }
-
-  @media (min-width: 768px) {
-    .animate-scroll {
-      animation-duration: 50s;
-    }
-  }
-</style>

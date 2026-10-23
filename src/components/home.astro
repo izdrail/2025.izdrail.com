@@ -17,7 +17,11 @@ import SkillsList from "../React/SkillsList.tsx";
           title="senior enginner"
           class="text-[var(--white)] text-5xl md:text-6xl font-medium text-pretty leading-none"
         >
-          Senior <br /> Engineer
+          Senior <br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-[#a476ff] to-[#6d5cff]"
+            >Engineer</span
+          >
         </h1>
         <p class="text-md md:text-2xl text-[var(--white-icon)]">
           Transforming ideas into interactive and seamless digital experiences
@@ -32,7 +36,7 @@ import SkillsList from "../React/SkillsList.tsx";
           rel="noopener noreferrer"
           href="https://github.com/izdrail"
           aria-label="Visit Stefan Bogdanel's GitHub profile"
-          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[var(--card)] hover:bg-[var(--white-icon-tr)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +54,7 @@ import SkillsList from "../React/SkillsList.tsx";
           rel="noopener noreferrer"
           href="https://linkedin.com/in/izdrail"
           aria-label="Connect with Stefan Bogdanel on LinkedIn"
-          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[var(--card)] hover:bg-[var(--white-icon-tr)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +72,7 @@ import SkillsList from "../React/SkillsList.tsx";
           rel="noopener noreferrer"
           href="https://mail.google.com/mail/?view=cm&fs=1&to=stefan@izdrail.com&su=Hey%20Stefan!"
           aria-label="Send email to Stefan Bogdanel"
-          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[var(--card)] hover:bg-[var(--white-icon-tr)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -87,10 +91,10 @@ import SkillsList from "../React/SkillsList.tsx";
 
     <LogoWall />
 
-    <div class="flex flex-col lg:flex-row items-center gap-8">
+    <div class="flex flex-col lg:flex-row items-start gap-8">
       <SkillsList client:load />
       <div
-        class="flex justify-center md:w-full md:h-[292px] size-[290px] pt-3 md:pt-9 md:ml-16"
+        class="w-full lg:flex-1 h-[290px] md:h-[340px] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
       >
         <LetterGlitch
           client:load

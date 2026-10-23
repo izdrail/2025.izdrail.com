@@ -411,18 +411,19 @@ const fullTitle =
       crossorigin="anonymous"
     ></script>
   </head>
-  <body class="bg-[--background] md:px-48 lg:px-20 px-9">
+  <body class="bg-[--background] px-4 md:px-6 antialiased">
     <slot />
   </body>
 </html>
 
 <style is:global>
   :root {
-    --background: #101010;
+    --background: #050816;
     --sec: #a476ff;
     --white: #dfdfdf;
     --white-icon: #f3f3f398;
     --white-icon-tr: #f3f3f310;
+    --card: #0c142a99;
   }
 
   * {
@@ -439,6 +440,22 @@ const fullTitle =
   *::selection {
     background-color: var(--sec);
     color: var(--background);
+  }
+
+  body {
+    background-color: var(--background);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 38% at 88% -5%, rgba(64, 96, 255, 0.22), transparent 65%),
+      radial-gradient(ellipse 45% 32% at 100% 62%, rgba(164, 118, 255, 0.1), transparent 65%),
+      radial-gradient(ellipse 55% 40% at 0% 100%, rgba(109, 92, 255, 0.14), transparent 65%);
   }
 
   /* Scrollbar styles */

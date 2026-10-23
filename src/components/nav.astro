@@ -5,6 +5,8 @@ interface NavItem {
   icon: string;
 }
 
+const path = Astro.url.pathname;
+
 const navItems: NavItem[] = [
   {
     label: "Home",
@@ -14,39 +16,80 @@ const navItems: NavItem[] = [
   {
     label: "Chat",
     href: "/chat",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21 20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V9.48907C3 9.18048 3.14247 8.88917 3.38606 8.69972L11.3861 2.47749C11.7472 2.19663 12.2528 2.19663 12.6139 2.47749L20.6139 8.69972C20.8575 8.88917 21 9.18048 21 9.48907V20ZM19 19V9.97815L12 4.53371L5 9.97815V19H19Z"></path></svg>`,
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.7267 2.95694L16.2734 22.0432C16.1225 22.5716 15.7979 22.5956 15.5563 22.1126L11 13L1.9229 9.36919C1.41322 9.16532 1.41953 8.86022 1.95695 8.68108L21.0432 2.31901C21.5716 2.14285 21.8747 2.43866 21.7267 2.95694ZM19.0353 5.09647L6.81221 9.17085L12.4488 11.4255L15.4895 17.5068L19.0353 5.09647Z"></path></svg>`,
   },
-
   {
     label: "Contact",
     href: "/#contact",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.7267 2.95694L16.2734 22.0432C16.1225 22.5716 15.7979 22.5956 15.5563 22.1126L11 13L1.9229 9.36919C1.41322 9.16532 1.41953 8.86022 1.95695 8.68108L21.0432 2.31901C21.5716 2.14285 21.8747 2.43866 21.7267 2.95694ZM19.0353 5.09647L6.81221 9.17085L12.4488 11.4255L15.4895 17.5068L19.0353 5.09647Z"></path></svg>`,
   },
-
 ];
+
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : href.startsWith("/#") ? false : path.startsWith(href);
 ---
 
-<div class="flex justify-center w-full">
-  <nav
-    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:w-[33rem] rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
-  >
-    <div class="container mx-auto flex justify-center items-center p-3">
-      <ul
-        class="flex w-full justify-between md:space-x-6 md:justify-center md:gap-12 gap-6"
+<!-- Desktop top bar -->
+<header
+  class="hidden md:block fixed top-0 left-0 right-0 z-[100] border-b border-[#ffffff0d] bg-[#050816cc] backdrop-blur-xl"
+>
+  <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 text-[var(--white)]">
+      <span
+        class="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--white-icon-tr)] bg-[var(--card)] text-[var(--sec)] font-semibold text-sm"
+        >&lt;/&gt;</span
       >
+      <span class="font-medium">Stefan Bogdanel</span>
+    </a>
+    <nav>
+      <ul class="flex items-center gap-8">
         {
           navItems.map((item) => (
-            <li title="laravel company founder" class="flex-1 md:flex-none">
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  "text-sm transition-colors pb-1",
+                  isActive(item.href)
+                    ? "text-[var(--white)] border-b-2 border-[var(--sec)]"
+                    : "text-[var(--white-icon)] hover:text-[var(--white)]",
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a
+      href="/#contact"
+      class="text-sm font-medium text-white px-4 py-2 rounded-full bg-gradient-to-r from-[#7c3aed] to-[#a476ff] hover:opacity-90 transition-opacity shadow-lg shadow-[#7c3aed33]"
+    >
+      Let's talk
+    </a>
+  </div>
+</header>
+
+<!-- Mobile bottom tab bar -->
+<div class="md:hidden flex justify-center w-full">
+  <nav
+    class="fixed flex left-0 right-0 z-[100] bg-[#0a1020e6] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all bottom-0 rounded-t-2xl"
+  >
+    <div class="container mx-auto flex justify-center items-center p-3">
+      <ul class="flex w-full justify-between gap-6">
+        {
+          navItems.map((item) => (
+            <li title={item.label} class="flex-1">
               <a
                 href={item.href}
                 title={item.label}
-                class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base"
+                class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs"
               >
-                <span class="md:hidden flex items-center justify-center w-6 h-6">
+                <span class="flex items-center justify-center w-6 h-6">
                   <fragment set:html={item.icon} />
                 </span>
-                <span class="hidden md:inline-block">{item.label}</span>
-                <span class="md:hidden">{item.label}</span>
+                <span>{item.label}</span>
               </a>
             </li>
           ))
@@ -69,31 +112,6 @@ const navItems: NavItem[] = [
         });
       }
     });
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("section[id]");
-    const navLinks = document.querySelectorAll("nav a[href^='#']");
-    const observerOptions = { threshold: 0.6 };
-
-    const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navLinks.forEach((link) => link.classList.remove("active"));
-          const id = entry.target.getAttribute("id");
-          const activeLink = document.querySelector(`nav a[href="#${id}"]`);
-          if (activeLink) {
-            activeLink.classList.add("active");
-          }
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
-    sections.forEach((section) => observer.observe(section));
   });
 </script>
 

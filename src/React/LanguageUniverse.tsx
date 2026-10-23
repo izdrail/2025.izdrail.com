@@ -263,6 +263,11 @@ export default function LanguageUniverse() {
       let rotY = 0.6;
       let velX = 0;
       let velY = 0.0016; // idle spin
+      // wheel zoom: camera distance along z, eased toward camTarget
+      let camDist = 19;
+      let camTarget = 19;
+      const CAM_MIN = 10;
+      const CAM_MAX = 34;
       let dragging = false;
       let lastX = 0;
       let lastY = 0;
@@ -295,7 +300,7 @@ export default function LanguageUniverse() {
         const z1 = -x * sy + z * cy;
         const y1 = y * cx - z1 * sx;
         const z2 = y * sx + z1 * cx;
-        const zv = z2 - 19; // camera at z=19
+        const zv = z2 - camDist; // camera at z=camDist (wheel zoom)
         if (zv > -2) return null;
         const f = 1 / Math.tan((40 * Math.PI) / 360);
         const aspect = w / h;
@@ -397,6 +402,15 @@ export default function LanguageUniverse() {
         }
         dragging = false;
       }
+      function onWheel(e: WheelEvent) {
+        e.preventDefault();
+        // deltaMode 1 = lines (some browsers), normalize to pixels
+        const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
+        camTarget = Math.max(
+          CAM_MIN,
+          Math.min(CAM_MAX, camTarget * Math.exp(dy * 0.0012))
+        );
+      }
       function wake() {
         if (idleTimer) clearTimeout(idleTimer);
         idleTimer = setTimeout(() => {
@@ -408,6 +422,7 @@ export default function LanguageUniverse() {
       window.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
       canvas.addEventListener("pointerdown", wake);
+      canvas.addEventListener("wheel", onWheel, { passive: false });
       canvas.style.cursor = "grab";
       // horizontal swipes rotate the cloud, vertical swipes still scroll the page
       canvas.style.touchAction = "pan-y";
@@ -458,6 +473,12 @@ export default function LanguageUniverse() {
         scene.rotation.y = rotY;
         scene.rotation.x = rotX;
 
+        // zoom easing
+        if (Math.abs(camTarget - camDist) > 0.0005) {
+          camDist += (camTarget - camDist) * 0.14;
+          camera.position.z = camDist;
+        }
+
         // boosts
         let dirty = false;
         for (let i = 0; i < n; i++) {
@@ -479,6 +500,7 @@ export default function LanguageUniverse() {
         ro.disconnect();
         io.disconnect();
         canvas.removeEventListener("pointerdown", onDown);
+        canvas.removeEventListener("wheel", onWheel);
         window.removeEventListener("pointermove", onMove);
         window.removeEventListener("pointerup", onUp);
         if (idleTimer) clearTimeout(idleTimer);

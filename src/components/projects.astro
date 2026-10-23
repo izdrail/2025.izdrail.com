@@ -1,8 +1,4 @@
 ---
-import { Image } from "astro:assets";
-import svgl from "../../public/svgl.png";
-import stockin from "../../public/stockin.png";
-
 interface Project {
   title: string;
   image: ImageMetadata | string;
@@ -23,36 +19,6 @@ const projects: Project[] = [
     description:
       "My side project where I am spending my tokens: a native code editor written in Rust (a Lapce derivative) with AI chat and reviewed edits built in.",
   },
-  {
-    title: "Jobs Scraper",
-    image:
-      "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop",
-    link: "https://github.com/izdrail",
-    preview: "https://jobs.izdrail.com",
-    status: "Job Search Platform",
-    description:
-      "Aggregating jobs from Indeed, LinkedIn, Glassdoor, The Guardian, CV Library, and Builtin",
-  },
-  {
-    title: "Scraper",
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-    link: "https://github.com/izdrail",
-    preview: "https://scraper.izdrail.com",
-    status: "Web Scraper",
-    description:
-      "Execute scraper CLI command with NLP analysis. Supports 18 networks: Facebook, Instagram, Twitter, YouTube, TikTok, Telegram, Twitch, Reddit, 9gag, Pinterest, Flickr, Tumblr, iFunny, VK, Pikabu, Vimeo, Odnoklassniki, Coub. Returns enriched results with execution logs and metadata",
-  },
-  {
-    title: "Trending Topics",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-    link: "https://github.com/izdrail",
-    preview: "https://trending.izdrail.com",
-    status: "Analytics Dashboard",
-    description:
-      "TrendsPy API wrapper for Google Trends analysis. Features: interest over time, interest by region, related queries/topics, trending now (RSS & showcase), comparisons, export functionality, categories, geo data, history tracking, API stats, and cache management",
-  },
 ];
 ---
 
@@ -64,7 +30,12 @@ const projects: Project[] = [
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My works</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8">Projects</h3>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div
+      class:list={[
+        "grid grid-cols-1 gap-8",
+        projects.length > 1 ? "md:grid-cols-2" : "md:max-w-2xl md:mx-auto",
+      ]}
+    >
       {
         projects.map((project) => (
           <div class="group">

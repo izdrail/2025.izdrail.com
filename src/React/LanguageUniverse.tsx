@@ -74,9 +74,9 @@ function computePositions(mode: Mode | "az"): Float32Array {
       const t = n === 1 ? 0 : i / (n - 1);
       const rnd = mulberry32(hashStr(LANGS[i].n));
       const ang = t * Math.PI * 2 * turns;
-      const rad = 5.6 + (rnd() - 0.5) * 0.9;
+      const rad = 5.0 + (rnd() - 0.5) * 0.8;
       pos[i * 3] = Math.cos(ang) * rad;
-      pos[i * 3 + 1] = 6.5 - t * 13;
+      pos[i * 3 + 1] = 5.9 - t * 11.8;
       pos[i * 3 + 2] = Math.sin(ang) * rad;
     }
     return pos;
@@ -85,14 +85,14 @@ function computePositions(mode: Mode | "az"): Float32Array {
   const keys = Array.from(new Set(LANGS.map(keyOf)));
   const counts = new Map<string, number>();
   for (const l of LANGS) counts.set(keyOf(l), (counts.get(keyOf(l)) || 0) + 1);
-  const centers = clusterCenters(keys, mode === "domain" ? 6.4 : 5.0);
+  const centers = clusterCenters(keys, mode === "domain" ? 5.2 : 4.4);
   LANGS.forEach((l, i) => {
     const k = keyOf(l);
     const c = centers.get(k)!;
     const rnd = mulberry32(hashStr(l.n + k));
     // gaussian-ish jitter in a ball, cluster radius scales with its size
     const count = counts.get(k) || 1;
-    const spread = Math.min(2.6, 0.9 + Math.sqrt(count) * 0.28);
+    const spread = Math.min(1.8, 0.75 + Math.sqrt(count) * 0.22);
     const u = rnd();
     const v = rnd();
     const rr = Math.cbrt(rnd()) * spread;
@@ -123,7 +123,7 @@ void main() {
   float tw = 0.85 + 0.3 * sin(uTime * 1.6 + aPhase);
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   float s = aSize * (1.0 + aBoost * 1.1) * tw;
-  gl_PointSize = s * uPR * (170.0 / max(0.1, -mv.z));
+  gl_PointSize = s * uPR * (88.0 / max(0.1, -mv.z));
   gl_Position = projectionMatrix * mv;
 }
 `;
@@ -134,9 +134,9 @@ varying float vBoost;
 void main() {
   vec2 uv = gl_PointCoord - 0.5;
   float d = length(uv);
-  float core = smoothstep(0.5, 0.08, d);
-  float glow = smoothstep(0.5, 0.18, d) * 0.35;
-  float a = core + glow * (0.35 + vBoost);
+  float core = smoothstep(0.42, 0.28, d);
+  float glow = smoothstep(0.5, 0.3, d) * 0.22;
+  float a = core + glow * (0.3 + vBoost);
   if (a < 0.02) discard;
   vec3 col = mix(vColor, vec3(1.0), vBoost * core * 0.65);
   gl_FragColor = vec4(col, a);
@@ -205,7 +205,7 @@ export default function LanguageUniverse() {
       gl.clearColor(0, 0, 0, 0);
 
       const camera = new Camera(gl, { fov: 40 });
-      camera.position.set(0, 0, 17);
+      camera.position.set(0, 0, 19);
       camera.lookAt([0, 0, 0]);
       const scene = new Transform();
       // match the picking math: v' = Rx * Ry * v (Euler order XYZ)
@@ -228,7 +228,7 @@ export default function LanguageUniverse() {
         colors[i * 3 + 1] = rgb[1];
         colors[i * 3 + 2] = rgb[2];
         const rnd = mulberry32(hashStr(l.n));
-        sizes[i] = isStack ? 3.4 : 1.5 + rnd() * 0.9;
+        sizes[i] = isStack ? 2.6 : 1.1 + rnd() * 0.7;
         phases[i] = rnd() * Math.PI * 2;
       });
 
@@ -295,7 +295,7 @@ export default function LanguageUniverse() {
         const z1 = -x * sy + z * cy;
         const y1 = y * cx - z1 * sx;
         const z2 = y * sx + z1 * cx;
-        const zv = z2 - 17; // camera at z=17
+        const zv = z2 - 19; // camera at z=19
         if (zv > -2) return null;
         const f = 1 / Math.tan((40 * Math.PI) / 360);
         const aspect = w / h;

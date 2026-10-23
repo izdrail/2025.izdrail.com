@@ -1,14 +1,12 @@
 import { useRef, useEffect } from "react";
 
 // Personal easter eggs that occasionally surface in the glitch field
-// (Stefan's own words: "stefan, developer, moldavian, keen on saving
-// water, leftist views"). Rendered uppercase to match the glitch alphabet.
+// (Stefan's picks). Rendered uppercase to match the glitch alphabet.
 const EASTER_EGGS = [
   "STEFAN",
   "DEVELOPER",
   "MOLDAVIAN",
   "KEEN ON SAVING WATER",
-  "LEFTIST VIEWS",
 ];
 const EGG_COLOR = "#A476FF";
 const EGG_HOLD_MS = 4000;

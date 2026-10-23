@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import data from "../data/languages.json";
 
-type Lang = { n: string; c: string | null; d: string; f: string };
+type Lang = { n: string; c: string | null; d: string; f: string; k?: string };
 type Mode = "domain" | "family";
 
 const LANGS = data.languages as Lang[];
 const DOMAIN_LABELS = data.domains as Record<string, string>;
 const FAMILY_LABELS = data.families as Record<string, string>;
+const KIND_LABELS = (data as { kinds?: Record<string, string> }).kinds ?? {};
 const STACK = data.stack as Record<string, string>;
 
 const ACCENT = "#a476ff";
@@ -570,8 +571,9 @@ export default function LanguageUniverse() {
                 )}
               </div>
               <div className="text-[var(--white-icon)] text-xs mt-1">
-                {DOMAIN_LABELS[selected.d] ?? selected.d} ·{" "}
-                {FAMILY_LABELS[selected.f] ?? selected.f}
+                {selected.k && KIND_LABELS[selected.k]
+                  ? `${KIND_LABELS[selected.k]} · ${DOMAIN_LABELS[selected.d] ?? selected.d}`
+                  : `${DOMAIN_LABELS[selected.d] ?? selected.d} · ${FAMILY_LABELS[selected.f] ?? selected.f}`}
               </div>
               {STACK[selected.n] && (
                 <div className="text-[var(--white)] text-sm mt-2">
@@ -605,6 +607,11 @@ export default function LanguageUniverse() {
             {m.label}
           </button>
         ))}
+      </div>
+
+      {/* grouping honesty note */}
+      <div className="absolute bottom-3 right-3 z-10 hidden md:block text-[10px] text-[var(--white-icon)] opacity-80">
+        domains &amp; families are editorial groupings
       </div>
 
       {/* legend */}

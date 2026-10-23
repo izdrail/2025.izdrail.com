@@ -9,6 +9,16 @@ const DOMAIN_LABELS = data.domains as Record<string, string>;
 const FAMILY_LABELS = data.families as Record<string, string>;
 const KIND_LABELS = (data as { kinds?: Record<string, string> }).kinds ?? {};
 const STACK = data.stack as Record<string, string>;
+const LINKS = ((data as { links?: string[][] }).links ?? []).filter(
+  (p): p is [string, string] => p.length === 2
+);
+
+// name -> related names (documented influence, either direction)
+const RELATED = new Map<string, string[]>();
+for (const [a, b] of LINKS) {
+  RELATED.set(a, [...(RELATED.get(a) ?? []), b]);
+  RELATED.set(b, [...(RELATED.get(b) ?? []), a]);
+}
 
 const ACCENT = "#a476ff";
 const FIELD = "#7a6fa6"; // muted lavender for the universe field
@@ -143,6 +153,27 @@ void main() {
 }
 `;
 
+const LINE_VERT = `
+attribute vec3 position;
+attribute float aAlpha;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+varying float vA;
+void main() {
+  vA = aAlpha;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+const LINE_FRAG = `
+precision highp float;
+uniform vec3 uBase;
+uniform vec3 uHi;
+varying float vA;
+void main() {
+  gl_FragColor = vec4(mix(uBase, uHi, vA), mix(0.14, 0.95, vA));
+}
+`;
+
 const MODES: { id: Mode | "az"; label: string }[] = [
   { id: "domain", label: "By domain" },
   { id: "family", label: "By family" },
@@ -251,12 +282,64 @@ export default function LanguageUniverse() {
       const points = new Mesh(gl, { geometry, program, mode: gl.POINTS, frustumCulled: false });
       points.setParent(scene);
 
+      // related-language graph edges (documented influence pairs)
+      const idxOf = new Map<string, number>();
+      LANGS.forEach((l, i) => {
+        if (!idxOf.has(l.n)) idxOf.set(l.n, i);
+      });
+      const edges: [number, number][] = [];
+      for (const [a, b] of LINKS) {
+        const ia = idxOf.get(a);
+        const ib = idxOf.get(b);
+        if (ia != null && ib != null && ia !== ib) edges.push([ia, ib]);
+      }
+      const E = edges.length;
+      const linePos = new Float32Array(E * 6);
+      const lineAlpha = new Float32Array(E * 2);
+      const lineGeometry = new Geometry(gl, {
+        position: { size: 3, data: linePos },
+        aAlpha: { size: 1, data: lineAlpha },
+      });
+      const lineProgram = new Program(gl, {
+        vertex: LINE_VERT,
+        fragment: LINE_FRAG,
+        transparent: true,
+        depthTest: true,
+        depthWrite: false,
+        uniforms: {
+          uBase: { value: hexToRgb(FIELD) },
+          uHi: { value: hexToRgb(ACCENT) },
+        },
+      });
+      const lines = new Mesh(gl, {
+        geometry: lineGeometry,
+        program: lineProgram,
+        mode: gl.LINES,
+        frustumCulled: false,
+      });
+      lines.setParent(scene);
+      points.renderOrder = 1; // keep points visually above the web
+
       // layout transitions (CPU lerp)
       let from = Float32Array.from(startPos);
       let target = Float32Array.from(startPos);
       let t0 = performance.now();
       const DUR = 900;
       const current = geometry.attributes.position.data as Float32Array;
+
+      function syncLinePositions() {
+        for (let e = 0; e < E; e++) {
+          const [ia, ib] = edges[e];
+          linePos[e * 6] = current[ia * 3];
+          linePos[e * 6 + 1] = current[ia * 3 + 1];
+          linePos[e * 6 + 2] = current[ia * 3 + 2];
+          linePos[e * 6 + 3] = current[ib * 3];
+          linePos[e * 6 + 4] = current[ib * 3 + 1];
+          linePos[e * 6 + 5] = current[ib * 3 + 2];
+        }
+        lineGeometry.attributes.position.needsUpdate = true;
+      }
+      syncLinePositions();
 
       // rotation state
       let rotX = -0.15;
@@ -275,6 +358,16 @@ export default function LanguageUniverse() {
       let idleTimer: ReturnType<typeof setTimeout> | null = null;
       let hovering = -1;
       let selectedIdx = -1;
+
+      function refreshLineAlpha() {
+        const active = hovering >= 0 ? hovering : selectedIdx;
+        for (let e = 0; e < E; e++) {
+          const on = active >= 0 && (edges[e][0] === active || edges[e][1] === active);
+          lineAlpha[e * 2] = on ? 1 : 0;
+          lineAlpha[e * 2 + 1] = on ? 1 : 0;
+        }
+        lineGeometry.attributes.aAlpha.needsUpdate = true;
+      }
 
       const boostTarget = new Float32Array(n);
 
@@ -346,6 +439,7 @@ export default function LanguageUniverse() {
             setBoost(idx, 1);
             focusPoint(idx);
             setSelected(LANGS[idx]);
+            refreshLineAlpha();
           }
         },
         pickAt: (px, py) => {
@@ -381,6 +475,7 @@ export default function LanguageUniverse() {
           if (idx !== hovering) {
             hovering = idx;
             setBoost(idx >= 0 ? idx : selectedIdx, 1);
+            refreshLineAlpha();
             canvas.style.cursor = idx >= 0 ? "pointer" : "grab";
           }
         }
@@ -399,6 +494,7 @@ export default function LanguageUniverse() {
             setBoost(-1, 0);
             setSelected(null);
           }
+          refreshLineAlpha();
         }
         dragging = false;
       }
@@ -459,6 +555,7 @@ export default function LanguageUniverse() {
           for (let i = 0; i < current.length; i++)
             current[i] = from[i] + (target[i] - from[i]) * e;
           geometry.attributes.position.needsUpdate = true;
+          syncLinePositions();
         }
 
         // rotation
@@ -515,6 +612,7 @@ export default function LanguageUniverse() {
   }, []);
 
   const stackNames = Object.keys(STACK);
+  const selectedRelated = selected ? (RELATED.get(selected.n) ?? []) : [];
 
   if (glFailed) {
     return (
@@ -602,6 +700,22 @@ export default function LanguageUniverse() {
                   {STACK[selected.n]}
                 </div>
               )}
+              {selectedRelated.length > 0 && (
+                <div className="mt-2 text-xs leading-6">
+                  <span className="text-[var(--white-icon)]">
+                    Related:{" "}
+                  </span>
+                  {selectedRelated.map((name) => (
+                    <button
+                      key={name}
+                      onClick={() => apiRef.current?.focus(name)}
+                      className="mr-1.5 rounded-full border border-[var(--white-icon-tr)] px-2 py-0.5 text-[var(--white)] hover:border-[var(--sec)] hover:text-[var(--sec)] transition-colors"
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button
               onClick={() => setSelected(null)}
@@ -633,7 +747,8 @@ export default function LanguageUniverse() {
 
       {/* grouping honesty note */}
       <div className="absolute bottom-3 right-3 z-10 hidden md:block text-[10px] text-[var(--white-icon)] opacity-80">
-        domains &amp; families are editorial groupings
+        domains &amp; families are editorial groupings · lines show documented
+        influence
       </div>
 
       {/* legend */}

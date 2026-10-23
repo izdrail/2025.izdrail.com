@@ -92,37 +92,75 @@ function computePositions(mode: Mode | "az"): Float32Array {
     return pos;
   }
   if (mode === "brain") {
-    // brain silhouette: two ellipsoid hemisphere lobes side by side, the cleft
-    // between them stays visible as the cloud slowly rotates
+    // brain mode: the language nodes coat the same cerebrum / cerebellum /
+    // brainstem shape as the anatomical scaffold mesh rendered behind them
+    // (CC0, see public/brain-LICENSE.txt). The mesh provides the folds; the
+    // nodes stay a semantic point cloud.
     const n = LANGS.length;
     const golden = Math.PI * (3 - Math.sqrt(5));
-    // per-lobe radii: tall and deep, narrower across
-    const RX = 3.4, RY = 4.3, RZ = 4.9, GAP = 2.35;
+    const CEREB = Math.min(80, Math.floor(n * 0.14));
+    const STEM = 14;
+    const cort = n - CEREB;
+    // fitted to the normalized scaffold bounds (~9.4 world units deep)
+    const RX = 3.5, RY = 2.6, RZ = 4.3, CY = 1.35;
     for (let i = 0; i < n; i++) {
-      const lobe = i % 2; // alternate hemispheres
-      const k = Math.floor(i / 2);
-      const m = Math.ceil(n / 2);
-      const y0 = m === 1 ? 0 : 1 - (k / (m - 1)) * 2;
-      const r0 = Math.sqrt(Math.max(0, 1 - y0 * y0));
-      const th = golden * k;
       const rnd = mulberry32(hashStr(LANGS[i].n + "brain"));
-      let x = Math.cos(th) * r0 * RX;
-      let y = y0 * RY;
-      let z = Math.sin(th) * r0 * RZ;
-      // temporal taper: slightly narrower toward the front (z+)
+      if (i >= cort + STEM) {
+        // cerebellum: small finely-banded ellipsoid under the back
+        const k = i - cort - STEM;
+        const m = CEREB;
+        const y0 = m === 1 ? 0 : 1 - (k / (m - 1)) * 2;
+        const r0 = Math.sqrt(Math.max(0, 1 - y0 * y0));
+        const th = golden * k;
+        const band = 1 + 0.06 * Math.sin(y0 * 20) + (rnd() - 0.5) * 0.05;
+        pos[i * 3] = Math.cos(th) * r0 * 1.9 * band;
+        pos[i * 3 + 1] = y0 * 0.95 * band - 1.55;
+        pos[i * 3 + 2] = Math.sin(th) * r0 * 1.45 * band - 2.85;
+        continue;
+      }
+      if (i >= cort) {
+        // brainstem: short column dropping in front of the cerebellum
+        const t = (i - cort) / STEM;
+        const a = rnd() * Math.PI * 2;
+        const rr = 0.4 + rnd() * 0.2;
+        pos[i * 3] = Math.cos(a) * rr + t * 0.3;
+        pos[i * 3 + 1] = -2.1 - t * 1.9;
+        pos[i * 3 + 2] = -1.5 + Math.sin(a) * rr * 0.8;
+        continue;
+      }
+      const y0 = cort === 1 ? 0 : 1 - (i / (cort - 1)) * 2;
+      const r0 = Math.sqrt(Math.max(0, 1 - y0 * y0));
+      const th = golden * i;
+      const dx = Math.cos(th) * r0;
+      const dy = y0;
+      const dz = Math.sin(th) * r0;
+      // gentle surface irregularity only - the scaffold carries the folds
+      const fold = 1 + 0.05 * Math.sin(dy * 6.0 + dz * 4.0 + Math.sin(dx * 5.0) * 1.3);
+      let x = dx * RX * fold;
+      let y = dy * RY * fold + CY;
+      const z = dz * RZ * fold;
+      // frontal taper (+z front)
       if (z > 0) {
         const f = z / RZ;
-        x *= 1 - 0.22 * f * f;
-        y *= 1 - 0.12 * f * f;
+        x *= 1 - 0.16 * f * f;
+        y -= 0.1 * f * f * RY * 0.4;
       }
-      // organic jitter, kept small so the cleft stays readable
-      x += (rnd() - 0.5) * 0.4;
-      y += (rnd() - 0.5) * 0.4;
-      z += (rnd() - 0.5) * 0.4;
-      x += (lobe === 0 ? -GAP : GAP);
-      pos[i * 3] = x;
-      pos[i * 3 + 1] = y;
-      pos[i * 3 + 2] = z;
+      // longitudinal fissure: keep the top midline clear of nodes so the
+      // scaffold's fissure reads through the cloud
+      const ax = Math.abs(dx);
+      const topness = Math.min(1, Math.max(0, (dy + 0.3) / 0.8));
+      const FW = 0.16;
+      if (ax < FW && topness > 0) {
+        const side = dx === 0 ? (i % 2 === 0 ? -1 : 1) : Math.sign(dx);
+        const wall = 1 - ax / FW;
+        x = side * (FW + wall * 0.06) * RX * fold;
+        y -= wall * topness * 1.1;
+      } else if (ax < 0.42 && topness > 0) {
+        y -= (1 - (ax - FW) / (0.42 - FW)) * topness * 0.45;
+      }
+      pos[i * 3] = x + (rnd() - 0.5) * 0.14;
+      pos[i * 3 + 1] = y + (rnd() - 0.5) * 0.14;
+      pos[i * 3 + 2] = z + (rnd() - 0.5) * 0.14;
     }
     return pos;
   }
@@ -209,6 +247,40 @@ void main() {
 }
 `;
 
+const SURF_VERT = `
+attribute vec3 position;
+attribute vec3 normal;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+varying vec3 vN;
+varying vec3 vP;
+void main() {
+  vN = normalize(normalMatrix * normal);
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vP = mv.xyz;
+  gl_Position = projectionMatrix * mv;
+}
+`;
+
+const SURF_FRAG = `
+precision highp float;
+uniform vec3 uColor;
+uniform float uAlpha;
+varying vec3 vN;
+varying vec3 vP;
+void main() {
+  vec3 n = normalize(vN);
+  if (!gl_FrontFacing) n = -n;
+  vec3 l1 = normalize(vec3(0.5, 0.8, 0.6));
+  vec3 l2 = normalize(vec3(-0.6, -0.2, -0.5));
+  float d = max(dot(n, l1), 0.0) * 0.85 + max(dot(n, l2), 0.0) * 0.3;
+  float rim = pow(1.0 - abs(dot(n, normalize(-vP))), 2.0) * 0.65;
+  vec3 col = uColor * (0.5 + d) + vec3(0.5, 0.43, 0.8) * rim;
+  gl_FragColor = vec4(col, uAlpha);
+}
+`;
+
 const MODES: { id: Mode | "az"; label: string }[] = [
   { id: "brain", label: "Brain" },
   { id: "domain", label: "By domain" },
@@ -249,7 +321,7 @@ export default function LanguageUniverse() {
     let cleanup: (() => void) | null = null;
 
     (async () => {
-      const { Renderer, Camera, Transform, Program, Mesh, Geometry } = await import(
+      const { Renderer, Camera, Transform, Program, Mesh, Geometry, GLTFLoader } = await import(
         "ogl"
       );
       if (destroyed || !canvasRef.current || !wrapRef.current) return;
@@ -357,10 +429,62 @@ export default function LanguageUniverse() {
         frustumCulled: false,
       });
       lines.setParent(scene);
+
+      // anatomical brain scaffold: openly licensed CC0 mesh (source and
+      // provenance in public/brain-LICENSE.txt, decorative only - no medical
+      // accuracy claimed). Rendered low-opacity behind the node cloud and
+      // faded out outside brain mode. depthWrite stays off so it never
+      // occludes nodes or influence lines.
+      let scaffoldProg: any = null;
+      // fire-and-forget: the node cloud renders immediately, the scaffold
+      // fades in whenever the ~4MB mesh finishes loading
+      (async () => {
+      try {
+        const gltf = await GLTFLoader.load(gl, "/brain.glb");
+        if (destroyed) return;
+        const root = (gltf.scene && gltf.scene[0]) || null;
+        let bm: any = null;
+        root?.traverse((m: any) => {
+          if ((m as unknown as { geometry?: unknown }).geometry && !bm) bm = m;
+        });
+        const meshNode: any = bm;
+        if (meshNode && meshNode.geometry) {
+          meshNode.geometry.computeBoundingBox();
+          const bb = meshNode.geometry.bounds;
+          const size = [bb.max[0] - bb.min[0], bb.max[1] - bb.min[1], bb.max[2] - bb.min[2]];
+          const ctr = [
+            (bb.max[0] + bb.min[0]) / 2,
+            (bb.max[1] + bb.min[1]) / 2,
+            (bb.max[2] + bb.min[2]) / 2,
+          ];
+          const sc = 9.0 / Math.max(...size);
+          scaffoldProg = new Program(gl, {
+            vertex: SURF_VERT,
+            fragment: SURF_FRAG,
+            transparent: true,
+            depthTest: true,
+            depthWrite: false,
+            cullFace: false,
+            uniforms: {
+              uColor: { value: hexToRgb("#7d6fc8") },
+              uAlpha: { value: 0.45 },
+            },
+          });
+          meshNode.program = scaffoldProg;
+          const holder = new Transform();
+          holder.position.set(-ctr[0] * sc, -ctr[1] * sc + 0.35, -ctr[2] * sc);
+          holder.scale.set(sc);
+          meshNode.setParent(holder);
+          holder.setParent(scene);
+        }
+      } catch {
+        // scaffold unavailable - the node cloud still works on its own
+      }
+      })();
       points.renderOrder = 1; // keep points visually above the web
 
       // layout transitions (CPU lerp)
-      let from = Float32Array.from(startPos);
+      let from: Float32Array = Float32Array.from(startPos);
       let target = Float32Array.from(startPos);
       let t0 = performance.now();
       const DUR = 900;
@@ -399,10 +523,10 @@ export default function LanguageUniverse() {
       syncLinePositions();
 
       // rotation state
-      const DEFAULT_ROT_X = -0.15;
+      const DEFAULT_ROT_X = -0.35;
       let rotX = DEFAULT_ROT_X;
       let rotXFrom = DEFAULT_ROT_X; // tilt eased back to neutral on layout change
-      let rotY = 0.6;
+      let rotY = 1.2; // open on the 3/4 view: fissure + cerebellum read immediately
       let velX = 0;
       let velY = 0.0016; // idle spin
       // wheel zoom: camera distance along z, eased toward camTarget
@@ -410,6 +534,8 @@ export default function LanguageUniverse() {
       let camTarget = 19;
       const CAM_MIN = 10;
       const CAM_MAX = 34;
+      let scaffoldShow = 1;
+      let scaffoldShowTarget = 1;
       let dragging = false;
       let lastX = 0;
       let lastY = 0;
@@ -436,6 +562,7 @@ export default function LanguageUniverse() {
       function scheduleTransition(m: Mode | "az") {
         from = Float32Array.from(current);
         target = computePositions(m);
+        scaffoldShowTarget = m === "brain" ? 1 : 0;
         t0 = performance.now();
         rotXFrom = rotX; // recenter any focus tilt over the transition
       }
@@ -616,6 +743,8 @@ export default function LanguageUniverse() {
           geometry.attributes.position.needsUpdate = true;
           syncLinePositions();
         }
+        scaffoldShow += (scaffoldShowTarget - scaffoldShow) * 0.12;
+        if (scaffoldProg) scaffoldProg.uniforms.uAlpha.value = 0.45 * scaffoldShow;
 
         // rotation
         if (!dragging) {
@@ -808,7 +937,7 @@ export default function LanguageUniverse() {
       </div>
 
       {/* grouping honesty note */}
-      <div className="absolute bottom-3 right-3 z-10 hidden md:block text-[10px] text-[var(--white-icon)] opacity-80">
+      <div className="absolute bottom-14 right-3 z-10 hidden md:block text-right text-[10px] text-[var(--white-icon)] opacity-80">
         domains &amp; families are editorial groupings · lines show documented
         influence
       </div>

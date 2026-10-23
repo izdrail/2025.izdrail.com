@@ -227,8 +227,20 @@ const LetterGlitch = ({
       nextEggAt.current = now + 5000;
       return;
     }
-    const col = 1 + Math.floor(Math.random() * (columns - word.length - 1));
-    const row = Math.floor(Math.random() * rows);
+    let col = 1 + Math.floor(Math.random() * (columns - word.length - 1));
+    let row = Math.floor(Math.random() * rows);
+    // deterministic position hook for acceptance: ?eggpos=ROW,COL pins the
+    // forced egg to a cell so reviewers can verify it renders
+    const pos = import.meta.env.DEV
+      ? new URLSearchParams(window.location.search).get("eggpos")
+      : null;
+    if (pos) {
+      const [pr, pc] = pos.split(",").map((v) => parseInt(v, 10));
+      if (Number.isFinite(pr) && Number.isFinite(pc)) {
+        row = Math.max(0, Math.min(rows - 1, pr));
+        col = Math.max(0, Math.min(Math.max(0, columns - word.length), pc));
+      }
+    }
     const start = row * columns + col;
     for (let i = 0; i < word.length; i++) {
       const cell = letters.current[start + i];

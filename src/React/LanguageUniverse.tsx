@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import data from "../data/languages.json";
+import LetterGlitch from "./LetterGlitch.tsx";
 
 type Lang = { n: string; c: string | null; d: string; f: string; k?: string };
 type Mode = "domain" | "family" | "brain";
@@ -822,6 +823,20 @@ export default function LanguageUniverse() {
 
   return (
     <div ref={wrapRef} className="relative h-full w-full overflow-hidden">
+      {/* letter-glitch backdrop: the same field as the hero, personal easter
+          eggs included, dimmed so nodes, links and the brain mesh stay readable */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.32]"
+        aria-hidden="true"
+      >
+        <LetterGlitch
+          glitchColors={["#5e4491", "#A476FF", "#241a38"]}
+          glitchSpeed={33}
+          centerVignette={false}
+          outerVignette={true}
+          smooth={true}
+        />
+      </div>
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
       {/* search */}

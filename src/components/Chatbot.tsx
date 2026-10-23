@@ -2043,6 +2043,9 @@ function ModelSelect({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
+  // Some drivers dispatch a synthetic click for Enter alongside keydown;
+  // ignore a click that lands right after a keyboard pick.
+  const lastPickAt = useRef(0);
   const selectedIdx = Math.max(0, models.findIndex((m) => m.name === value));
 
   useEffect(() => {
@@ -2062,6 +2065,7 @@ function ModelSelect({
   const pick = (i: number) => {
     const m = models[i];
     if (m) onChange(m.name);
+    lastPickAt.current = Date.now();
     setOpen(false);
   };
 
@@ -2089,7 +2093,10 @@ function ModelSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label="Select model"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          if (Date.now() - lastPickAt.current < 400) return;
+          setOpen((o) => !o);
+        }}
       >
         <span>{value}</span>
         <ChevronDown className="h-3 w-3" aria-hidden />

@@ -56,6 +56,7 @@ import {
   FileUp,
   Keyboard,
   StopCircle,
+  ChevronDown,
 } from "lucide-react";
 
 type Role = "user" | "assistant";
@@ -1335,18 +1336,11 @@ function Chatbot() {
               {isLoadingModels ? (
                 <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
               ) : availableModels.length > 0 ? (
-                <select
+                <ModelSelect
+                  models={availableModels}
                   value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value)}
-                  className="text-xs py-1 px-2 rounded-md border border-border bg-background text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                  aria-label="Select model"
-                >
-                  {availableModels.map((m) => (
-                    <option key={m.name} value={m.name}>
-                      {m.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedModel}
+                />
               ) : null}
             </div>
           </div>
@@ -2031,6 +2025,93 @@ function Chatbot() {
           </PromptInput>
         </div>
       </main>
+    </div>
+  );
+}
+
+// Themed model picker: native <select> popups ignore page CSS on several
+// platforms, so the chat uses an in-page listbox with the site palette.
+function ModelSelect({
+  models,
+  value,
+  onChange,
+}: {
+  models: { name: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const selectedIdx = Math.max(0, models.findIndex((m) => m.name === value));
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) setActive(selectedIdx);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const pick = (i: number) => {
+    const m = models[i];
+    if (m) onChange(m.name);
+    setOpen(false);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (!open) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setOpen(true);
+      }
+      return;
+    }
+    if (e.key === "Escape") { e.preventDefault(); setOpen(false); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(models.length - 1, a + 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
+    else if (e.key === "Home") { e.preventDefault(); setActive(0); }
+    else if (e.key === "End") { e.preventDefault(); setActive(models.length - 1); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(active); }
+    else if (e.key === "Tab") { setOpen(false); }
+  };
+
+  return (
+    <div className="chat-model-select" ref={rootRef} onKeyDown={onKeyDown}>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label="Select model"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span>{value}</span>
+        <ChevronDown className="h-3 w-3" aria-hidden />
+      </button>
+      {open && (
+        <ul role="listbox" aria-label="Select model" aria-activedescendant={`model-opt-${active}`}>
+          {models.map((m, i) => (
+            <li
+              key={m.name}
+              id={`model-opt-${i}`}
+              role="option"
+              aria-selected={m.name === value}
+              data-active={i === active || undefined}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => pick(i)}
+            >
+              <span>{m.name}</span>
+              {m.name === value && <Check className="h-3 w-3" aria-hidden />}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

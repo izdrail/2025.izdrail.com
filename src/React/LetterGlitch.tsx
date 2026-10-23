@@ -44,6 +44,14 @@ const LetterGlitch = ({
   );
   const nextEggAt = useRef(Date.now() + 3000);
 
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("eggtest");
+    if (q) {
+      forcedEgg.current = q.toUpperCase().slice(0, 40);
+      nextEggAt.current = Date.now() + 800;
+    }
+  }, []);
+
   const fontSize = 16;
   const charWidth = 10;
   const charHeight = 20;
@@ -207,10 +215,16 @@ const LetterGlitch = ({
     });
   };
 
+  // deterministic preview hook for acceptance: ?eggtest=PHRASE forces the
+  // first egg to render that phrase almost immediately
+  const forcedEgg = useRef<string | null>(null);
+
   const placeEgg = (now: number) => {
     const { columns, rows } = grid.current;
     const word =
+      forcedEgg.current ??
       EASTER_EGGS[Math.floor(Math.random() * EASTER_EGGS.length)];
+    forcedEgg.current = null;
     if (columns < word.length + 2 || rows < 2) {
       nextEggAt.current = now + 5000;
       return;

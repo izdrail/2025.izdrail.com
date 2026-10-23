@@ -289,7 +289,15 @@ const MODES: { id: Mode | "az"; label: string }[] = [
   { id: "az", label: "A-Z" },
 ];
 
-export default function LanguageUniverse() {
+export default function LanguageUniverse({
+  decorative = false,
+  initialRotY,
+}: {
+  /** page-background mode: no UI chrome, no interaction, letters handled by the page backdrop */
+  decorative?: boolean;
+  /** starting yaw so multiple decorative brains don't open on the same angle */
+  initialRotY?: number;
+}) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [mode, setMode] = useState<Mode | "az">("brain");
@@ -437,6 +445,7 @@ export default function LanguageUniverse() {
       // faded out outside brain mode. depthWrite stays off so it never
       // occludes nodes or influence lines.
       let scaffoldProg: any = null;
+      let scaffoldDone = false; // GLB settled (loaded or failed) - gates the decorative still
       // fire-and-forget: the node cloud renders immediately, the scaffold
       // fades in whenever the ~4MB mesh finishes loading
       (async () => {
@@ -481,6 +490,7 @@ export default function LanguageUniverse() {
       } catch {
         // scaffold unavailable - the node cloud still works on its own
       }
+      scaffoldDone = true;
       })();
       points.renderOrder = 1; // keep points visually above the web
 
@@ -527,7 +537,7 @@ export default function LanguageUniverse() {
       const DEFAULT_ROT_X = -0.35;
       let rotX = DEFAULT_ROT_X;
       let rotXFrom = DEFAULT_ROT_X; // tilt eased back to neutral on layout change
-      let rotY = 1.2; // open on the 3/4 view: fissure + cerebellum read immediately
+      let rotY = initialRotY ?? 1.2; // open on the 3/4 view: fissure + cerebellum read immediately
       let velX = 0;
       let velY = 0.0016; // idle spin
       // wheel zoom: camera distance along z, eased toward camTarget
@@ -701,20 +711,28 @@ export default function LanguageUniverse() {
         }, 4000);
       }
 
-      canvas.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onMove);
-      window.addEventListener("pointerup", onUp);
-      canvas.addEventListener("pointerdown", wake);
-      canvas.addEventListener("wheel", onWheel, { passive: false });
-      canvas.style.cursor = "grab";
-      // horizontal swipes rotate the cloud, vertical swipes still scroll the page
-      canvas.style.touchAction = "pan-y";
+      if (!decorative) {
+        canvas.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        canvas.addEventListener("pointerdown", wake);
+        canvas.addEventListener("wheel", onWheel, { passive: false });
+        canvas.style.cursor = "grab";
+        // horizontal swipes rotate the cloud, vertical swipes still scroll the page
+        canvas.style.touchAction = "pan-y";
+      }
 
+      // decorative (page-background) brains render until the scene settles,
+      // then the loop stops: the accepted visual stays as a still, the
+      // continuous GPU/CPU cost goes away. Declared before resize() runs.
+      let decoSettled = false;
       function resize() {
         const w = wrap.clientWidth;
         const h = wrap.clientHeight;
         renderer.setSize(w, h);
         camera.perspective({ aspect: w / h });
+        // the settled still has no loop to repaint after a resize
+        if (decoSettled) renderer.render({ scene, camera });
       }
       resize();
       const ro = new ResizeObserver(resize);
@@ -731,7 +749,7 @@ export default function LanguageUniverse() {
 
       const start = performance.now();
       function frame(now: number) {
-        raf = requestAnimationFrame(frame);
+        if (!decoSettled) raf = requestAnimationFrame(frame);
         if (!visible) return;
         program.uniforms.uTime.value = (now - start) / 1000;
 
@@ -781,6 +799,15 @@ export default function LanguageUniverse() {
         if (dirty) geometry.attributes.aBoost.needsUpdate = true;
 
         renderer.render({ scene, camera });
+        if (
+          decorative &&
+          !decoSettled &&
+          scaffoldDone &&
+          scaffoldShow > 0.98 &&
+          now - start > 1500
+        ) {
+          decoSettled = true;
+        }
       }
       raf = requestAnimationFrame(frame);
 
@@ -807,6 +834,7 @@ export default function LanguageUniverse() {
   const selectedRelated = selected ? (RELATED.get(selected.n) ?? []) : [];
 
   if (glFailed) {
+    if (decorative) return null;
     return (
       <div className="h-full w-full flex flex-wrap items-center justify-center gap-2 p-6">
         {stackNames.map((s) => (
@@ -824,22 +852,26 @@ export default function LanguageUniverse() {
   return (
     <div ref={wrapRef} className="relative h-full w-full overflow-hidden">
       {/* letter-glitch backdrop: the same field as the hero, personal easter
-          eggs included, dimmed so nodes, links and the brain mesh stay readable */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.32]"
-        aria-hidden="true"
-      >
-        <LetterGlitch
-          glitchColors={["#5e4491", "#A476FF", "#241a38"]}
-          glitchSpeed={33}
-          centerVignette={false}
-          outerVignette={true}
-          smooth={true}
-        />
-      </div>
+          eggs included, dimmed so nodes, links and the brain mesh stay readable.
+          Skipped in decorative mode - the page backdrop provides the letters. */}
+      {!decorative && (
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.32]"
+          aria-hidden="true"
+        >
+          <LetterGlitch
+            glitchColors={["#5e4491", "#A476FF", "#241a38"]}
+            glitchSpeed={33}
+            centerVignette={false}
+            outerVignette={true}
+            smooth={true}
+          />
+        </div>
+      )}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
       {/* search */}
+      {!decorative && (
       <div className="absolute left-3 top-3 z-10 w-56 max-w-[60vw]">
         <input
           value={query}
@@ -879,9 +911,10 @@ export default function LanguageUniverse() {
           </ul>
         )}
       </div>
+      )}
 
       {/* info card */}
-      {selected && (
+      {!decorative && selected && (
         <div className="absolute bottom-16 left-1/2 z-10 -translate-x-1/2 w-[min(92%,380px)] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020f2] backdrop-blur-sm p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -935,6 +968,7 @@ export default function LanguageUniverse() {
       )}
 
       {/* mode tabs */}
+      {!decorative && (
       <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 flex rounded-full border border-[var(--white-icon-tr)] bg-[#ffffff10] backdrop-blur-sm overflow-x-auto max-w-[92%]">
         {MODES.map((m) => (
           <button
@@ -950,21 +984,26 @@ export default function LanguageUniverse() {
           </button>
         ))}
       </div>
+      )}
 
       {/* grouping honesty note */}
-      <div className="absolute bottom-14 right-3 z-10 hidden md:block text-right text-[10px] text-[var(--white-icon)] opacity-80">
-        domains &amp; families are editorial groupings · lines show documented
-        influence
-      </div>
+      {!decorative && (
+        <div className="absolute bottom-14 right-3 z-10 hidden md:block text-right text-[10px] text-[var(--white-icon)] opacity-80">
+          domains &amp; families are editorial groupings · lines show documented
+          influence
+        </div>
+      )}
 
       {/* legend */}
-      <div className="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full bg-[#ffffff10] border border-[var(--white-icon-tr)] px-3 py-1.5 backdrop-blur-sm">
-        <span
-          className="h-2.5 w-2.5 rounded-full"
-          style={{ backgroundColor: ACCENT }}
-        />
-        <span className="text-[11px] text-[var(--white-icon)]">My stack</span>
-      </div>
+      {!decorative && (
+        <div className="absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full bg-[#ffffff10] border border-[var(--white-icon-tr)] px-3 py-1.5 backdrop-blur-sm">
+          <span
+            className="h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: ACCENT }}
+          />
+          <span className="text-[11px] text-[var(--white-icon)]">My stack</span>
+        </div>
+      )}
     </div>
   );
 }

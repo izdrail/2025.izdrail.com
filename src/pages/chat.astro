@@ -21,8 +21,12 @@ import "@/styles/chat.css";
     margin-top: 96px;
     background: var(--background);
   }
-</style>
-
-<style>
-@media (max-width: 767px) { .chat-page-container { margin-top: 0; height: calc(100dvh - 90px); } }
+  /* Mobile: no top nav, fixed bottom nav is 70px - keep the composer above it.
+     Must come after the base rule so it wins at equal specificity. */
+  @media (max-width: 767px) {
+    .chat-page-container {
+      margin-top: 0;
+      height: calc(100dvh - 90px);
+    }
+  }
 </style>

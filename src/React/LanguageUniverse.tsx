@@ -92,35 +92,34 @@ function computePositions(mode: Mode | "az"): Float32Array {
     return pos;
   }
   if (mode === "brain") {
-    // brain silhouette: fibonacci sphere deformed into two hemispheres with a
-    // longitudinal fissure, flatter vertically, tapered frontal lobe
+    // brain silhouette: two ellipsoid hemisphere lobes side by side, the cleft
+    // between them stays visible as the cloud slowly rotates
     const n = LANGS.length;
     const golden = Math.PI * (3 - Math.sqrt(5));
-    const R = 6.2;
+    // per-lobe radii: tall and deep, narrower across
+    const RX = 3.4, RY = 4.3, RZ = 4.9, GAP = 2.35;
     for (let i = 0; i < n; i++) {
-      const y0 = n === 1 ? 0 : 1 - (i / (n - 1)) * 2;
+      const lobe = i % 2; // alternate hemispheres
+      const k = Math.floor(i / 2);
+      const m = Math.ceil(n / 2);
+      const y0 = m === 1 ? 0 : 1 - (k / (m - 1)) * 2;
       const r0 = Math.sqrt(Math.max(0, 1 - y0 * y0));
-      const th = golden * i;
-      let x = Math.cos(th) * r0;
-      let y = y0;
-      let z = Math.sin(th) * r0;
+      const th = golden * k;
       const rnd = mulberry32(hashStr(LANGS[i].n + "brain"));
-      x *= R * 1.02;
-      y *= R * 0.74;
-      z *= R * 0.88;
-      // groove between hemispheres, deepest near the top
-      const groove = Math.max(0, 1 - Math.abs(y) / (R * 0.8));
-      const minGap = 0.55 * groove + 0.18;
-      if (Math.abs(x) < minGap) x = (x >= 0 ? 1 : -1) * (minGap + rnd() * 0.15);
-      // frontal taper toward z+
+      let x = Math.cos(th) * r0 * RX;
+      let y = y0 * RY;
+      let z = Math.sin(th) * r0 * RZ;
+      // temporal taper: slightly narrower toward the front (z+)
       if (z > 0) {
-        const f = z / (R * 0.88);
-        x *= 1 - 0.18 * f * f;
-        y *= 1 - 0.1 * f * f;
+        const f = z / RZ;
+        x *= 1 - 0.22 * f * f;
+        y *= 1 - 0.12 * f * f;
       }
-      x += (rnd() - 0.5) * 0.35;
-      y += (rnd() - 0.5) * 0.3;
-      z += (rnd() - 0.5) * 0.35;
+      // organic jitter, kept small so the cleft stays readable
+      x += (rnd() - 0.5) * 0.4;
+      y += (rnd() - 0.5) * 0.4;
+      z += (rnd() - 0.5) * 0.4;
+      x += (lobe === 0 ? -GAP : GAP);
       pos[i * 3] = x;
       pos[i * 3 + 1] = y;
       pos[i * 3 + 2] = z;

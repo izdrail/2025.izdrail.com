@@ -1,0 +1,40 @@
+---
+import LanguageUniverse from "../React/LanguageUniverse.tsx";
+---
+
+<section
+  class="text-[var(--white)] py-12"
+  id="languages"
+  aria-label="Interactive universe of programming languages"
+>
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-semibold mb-3">
+      A Universe of Languages
+    </h2>
+    <p class="text-[var(--white-icon)] max-w-3xl mb-6">
+      572 programming languages in one interactive 3D space. Drag to rotate,
+      search for a language, or rearrange it by domain, paradigm or A-Z. The
+      bright purple points are the ones I work with.
+    </p>
+    <div
+      class="h-[420px] md:h-[560px] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
+    >
+      <LanguageUniverse client:visible />
+    </div>
+    <p class="text-xs text-[var(--white-icon)] mt-3">
+      Language names and colors from
+      <a
+        href="https://github.com/github-linguist/linguist"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline hover:text-[var(--white)]">GitHub Linguist</a
+      > (MIT). Inspired by
+      <a
+        href="https://names.color.pizza"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="underline hover:text-[var(--white)]">Color Names</a
+      >.
+    </p>
+  </div>
+</section>

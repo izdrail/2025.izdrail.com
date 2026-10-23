@@ -1,0 +1,54 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Layout
+  title="Blog - izdrail.com"
+  description="Notes and funny takes on tech news, from a backend developer who has been building software since 2010."
+>
+  <main class="min-h-screen pt-24 md:pt-28 pb-24 px-4">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold text-[var(--white)]">Blog</h1>
+      <p class="mt-4 text-lg text-[var(--white-icon)]">
+        Occasional notes and a funny take on the tech news of the day.
+      </p>
+      {
+        posts.length === 0 ? (
+          <p class="mt-12 text-[var(--white-icon)]">
+            First post is being typed. Check back tomorrow.
+          </p>
+        ) : (
+          <ul class="mt-12 space-y-8">
+            {posts.map((post) => (
+              <li class="rounded-2xl border border-[var(--white-icon-tr)] bg-[var(--card)] p-6 hover:border-[var(--sec)] transition-colors">
+                <a href={`/blog/${post.id}`} class="block">
+                  <time
+                    class="text-sm text-[var(--sec)]"
+                    datetime={post.data.pubDate.toISOString()}
+                  >
+                    {post.data.pubDate.toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </time>
+                  <h2 class="mt-2 text-2xl font-semibold text-[var(--white)]">
+                    {post.data.title}
+                  </h2>
+                  <p class="mt-2 text-[var(--white-icon)]">
+                    {post.data.description}
+                  </p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </main>
+</Layout>

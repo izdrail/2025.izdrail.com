@@ -52,6 +52,9 @@
   border-bottom: 1px solid var(--chat-border) !important;
   background: var(--chat-card-bg) !important;
   backdrop-filter: blur(10px);
+  position: relative;
+  /* above the messages container so header-opened overlays paint on top */
+  z-index: 10;
 }
 
 /* Chat container */
@@ -479,9 +482,12 @@
   position: absolute;
   right: 0;
   top: calc(100% + 6px);
-  z-index: 60;
+  z-index: 80;
+  width: max-content;
   min-width: 12rem;
-  max-width: 70vw;
+  /* Must stay inside the chat column: an ancestor has overflow:hidden and
+     clips anything wider. Button sits >= ~260px from the column's left edge. */
+  max-width: min(15rem, calc(100vw - 2rem));
   max-height: 16rem;
   overflow-y: auto;
   margin: 0;
@@ -491,6 +497,11 @@
   border: 1px solid var(--chat-border);
   background: #0c142a;
   box-shadow: 0 12px 32px #00000090;
+}
+.chat-model-select > ul > li > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .chat-model-select > ul > li {
   display: flex;

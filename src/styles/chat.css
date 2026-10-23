@@ -425,3 +425,21 @@
   .chat-model-selector { margin-left: auto; }
   .chat-header > div:first-child > div:nth-child(2) { flex-shrink: 0; }
 }
+
+/* Native controls inside the chat should follow the dark palette */
+.chat-page-container,
+.chat-container {
+  color-scheme: dark;
+}
+
+/* Model dropdown: shadcn tokens resolve light here, force the chat palette
+   on both the closed control and the native option popup */
+.chat-model-selector select {
+  background: #0c142a !important;
+  color: var(--chat-white) !important;
+  border-color: var(--chat-border) !important;
+}
+.chat-model-selector select option {
+  background: #0c142a;
+  color: var(--chat-white);
+}

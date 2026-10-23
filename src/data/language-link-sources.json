@@ -1,0 +1,1370 @@
+{
+ "description": "Source ledger for the related-language graph edges in languages.json `links`. Each edge [influencer, influenced] is backed by the influenced language's English Wikipedia infobox 'influenced by' field (article URL) and/or its Wikidata entity P737 'influenced by' statements (entity URL#P737). Verified 2026-10-23.",
+ "edges": [
+  {
+   "from": "C",
+   "to": "C++",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C++_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2407#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Objective-C",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Objective-C_(programming_language)",
+    "https://www.wikidata.org/wiki/Q188531#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "C#",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Java",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q251#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "D",
+   "sources": [
+    "https://en.wikipedia.org/wiki/D_(programming_language)",
+    "https://www.wikidata.org/wiki/Q319268#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Go",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q37227#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "PHP",
+   "sources": [
+    "https://en.wikipedia.org/wiki/PHP_(programming_language)",
+    "https://www.wikidata.org/wiki/Q59#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Perl",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Perl_(programming_language)",
+    "https://www.wikidata.org/wiki/Q42478#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Python",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Python_(programming_language)",
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Zig",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Zig_(programming_language)",
+    "https://www.wikidata.org/wiki/Q51885456#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "Verilog",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Verilog",
+    "https://www.wikidata.org/wiki/Q827773#P737"
+   ]
+  },
+  {
+   "from": "C",
+   "to": "HLSL",
+   "sources": [
+    "https://en.wikipedia.org/wiki/HLSL"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Java",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q251#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "C#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "D",
+   "sources": [
+    "https://en.wikipedia.org/wiki/D_(programming_language)",
+    "https://www.wikidata.org/wiki/Q319268#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Carbon",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Carbon_(programming_language)",
+    "https://www.wikidata.org/wiki/Q113157814#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "UnrealScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/UnrealScript",
+    "https://www.wikidata.org/wiki/Q608276#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "AngelScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/AngelScript",
+    "https://www.wikidata.org/wiki/Q2366#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Solidity",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Solidity_(programming_language)"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Lua",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lua_(programming_language)",
+    "https://www.wikidata.org/wiki/Q207316#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Squirrel",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Squirrel_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1200182#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "PHP",
+   "sources": [
+    "https://en.wikipedia.org/wiki/PHP_(programming_language)",
+    "https://www.wikidata.org/wiki/Q59#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Zig",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Zig_(programming_language)",
+    "https://www.wikidata.org/wiki/Q51885456#P737"
+   ]
+  },
+  {
+   "from": "C++",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Kotlin",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kotlin_(programming_language)",
+    "https://www.wikidata.org/wiki/Q3816639#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Vala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1138939#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)",
+    "https://www.wikidata.org/wiki/Q406009#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Nemerle",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nemerle"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Swift",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+    "https://www.wikidata.org/wiki/Q17118377#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "TypeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/TypeScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q978185#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "C#",
+   "to": "D",
+   "sources": [
+    "https://en.wikipedia.org/wiki/D_(programming_language)",
+    "https://www.wikidata.org/wiki/Q319268#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Scala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q460584#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Kotlin",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kotlin_(programming_language)",
+    "https://www.wikidata.org/wiki/Q3816639#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Groovy",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Groovy_(programming_language)",
+    "https://www.wikidata.org/wiki/Q504453#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Ceylon",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ceylon_(programming_language)",
+    "https://www.wikidata.org/wiki/Q93482#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "C#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "JavaScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/JavaScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Processing",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q1053535#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "UnrealScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/UnrealScript"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)",
+    "https://www.wikidata.org/wiki/Q406009#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "TypeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/TypeScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q978185#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "Python",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "PHP",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q59#P737"
+   ]
+  },
+  {
+   "from": "Java",
+   "to": "X10",
+   "sources": [
+    "https://en.wikipedia.org/wiki/X10_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1852616#P737"
+   ]
+  },
+  {
+   "from": "Fortran",
+   "to": "BASIC",
+   "sources": [
+    "https://en.wikipedia.org/wiki/BASIC_(programming_language)",
+    "https://www.wikidata.org/wiki/Q42979#P737"
+   ]
+  },
+  {
+   "from": "Pascal",
+   "to": "Modula-2",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Modula-2_(programming_language)",
+    "https://www.wikidata.org/wiki/Q777358#P737"
+   ]
+  },
+  {
+   "from": "Modula-2",
+   "to": "Modula-3",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Modula-3_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1928222#P737"
+   ]
+  },
+  {
+   "from": "Modula-2",
+   "to": "Oberon",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Oberon_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1323362#P737"
+   ]
+  },
+  {
+   "from": "Oberon",
+   "to": "Component Pascal",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Component_Pascal"
+   ]
+  },
+  {
+   "from": "Pascal",
+   "to": "Ada",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ada_(programming_language)",
+    "https://www.wikidata.org/wiki/Q154755#P737"
+   ]
+  },
+  {
+   "from": "Pascal",
+   "to": "Go",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q37227#P737"
+   ]
+  },
+  {
+   "from": "Oberon",
+   "to": "Go",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q37227#P737"
+   ]
+  },
+  {
+   "from": "Oberon",
+   "to": "Nim",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nim_(programming_language)",
+    "https://www.wikidata.org/wiki/Q20080327#P737"
+   ]
+  },
+  {
+   "from": "Modula-3",
+   "to": "Python",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "Modula-3",
+   "to": "Nim",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nim_(programming_language)",
+    "https://www.wikidata.org/wiki/Q20080327#P737"
+   ]
+  },
+  {
+   "from": "Modula-3",
+   "to": "C#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "COBOL",
+   "to": "ABAP",
+   "sources": [
+    "https://en.wikipedia.org/wiki/ABAP",
+    "https://www.wikidata.org/wiki/Q380523#P737"
+   ]
+  },
+  {
+   "from": "Ada",
+   "to": "VHDL",
+   "sources": [
+    "https://en.wikipedia.org/wiki/VHDL",
+    "https://www.wikidata.org/wiki/Q209455#P737"
+   ]
+  },
+  {
+   "from": "Ada",
+   "to": "Nim",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nim_(programming_language)",
+    "https://www.wikidata.org/wiki/Q20080327#P737"
+   ]
+  },
+  {
+   "from": "Verilog",
+   "to": "SystemVerilog",
+   "sources": [
+    "https://en.wikipedia.org/wiki/SystemVerilog",
+    "https://www.wikidata.org/wiki/Q1387402#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Self",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Self_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1864529#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Objective-C",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Objective-C_(programming_language)",
+    "https://www.wikidata.org/wiki/Q188531#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Java",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q251#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Groovy",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Groovy_(programming_language)",
+    "https://www.wikidata.org/wiki/Q504453#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)",
+    "https://www.wikidata.org/wiki/Q406009#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Io",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Io_(programming_language)",
+    "https://www.wikidata.org/wiki/Q756175#P737"
+   ]
+  },
+  {
+   "from": "Smalltalk",
+   "to": "Scala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q460584#P737"
+   ]
+  },
+  {
+   "from": "Self",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Self",
+   "to": "Io",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Io_(programming_language)",
+    "https://www.wikidata.org/wiki/Q756175#P737"
+   ]
+  },
+  {
+   "from": "Objective-C",
+   "to": "Swift",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+    "https://www.wikidata.org/wiki/Q17118377#P737"
+   ]
+  },
+  {
+   "from": "Eiffel",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "Eiffel",
+   "to": "Scala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q460584#P737"
+   ]
+  },
+  {
+   "from": "Eiffel",
+   "to": "C#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "Dylan",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "Dylan",
+   "to": "Python",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Racket",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Racket_(programming_language)"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Lua",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lua_(programming_language)",
+    "https://www.wikidata.org/wiki/Q207316#P737"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Haskell",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Haskell_(programming_language)"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Julia",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Common Lisp",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)",
+    "https://www.wikidata.org/wiki/Q51798#P737"
+   ]
+  },
+  {
+   "from": "Common Lisp",
+   "to": "Dylan",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dylan_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1268744#P737"
+   ]
+  },
+  {
+   "from": "Common Lisp",
+   "to": "LFE",
+   "sources": [
+    "https://en.wikipedia.org/wiki/LFE_(programming_language)"
+   ]
+  },
+  {
+   "from": "Clojure",
+   "to": "Elixir",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Elixir_(programming_language)",
+    "https://www.wikidata.org/wiki/Q5362035#P737"
+   ]
+  },
+  {
+   "from": "Racket",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Standard ML",
+   "to": "OCaml",
+   "sources": [
+    "https://en.wikipedia.org/wiki/OCaml_(programming_language)",
+    "https://www.wikidata.org/wiki/Q212587#P737"
+   ]
+  },
+  {
+   "from": "Standard ML",
+   "to": "Haskell",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Haskell_(programming_language)"
+   ]
+  },
+  {
+   "from": "Standard ML",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "OCaml",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "OCaml",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "OCaml",
+   "to": "Reason",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Reason_(programming_language)"
+   ]
+  },
+  {
+   "from": "Reason",
+   "to": "ReScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/ReScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q116885321#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Agda",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Agda_(programming_language)",
+    "https://www.wikidata.org/wiki/Q20479#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Idris",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Idris_(programming_language)",
+    "https://www.wikidata.org/wiki/Q15408477#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "PureScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/PureScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q65082796#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Elm",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Elm_(programming_language)",
+    "https://www.wikidata.org/wiki/Q5366250#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Scala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q460584#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Swift",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+    "https://www.wikidata.org/wiki/Q17118377#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "C#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2370#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Mercury",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mercury_(programming_language)",
+    "https://www.wikidata.org/wiki/Q206040#P737"
+   ]
+  },
+  {
+   "from": "Haskell",
+   "to": "Python",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "Agda",
+   "to": "Idris",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Idris_(programming_language)",
+    "https://www.wikidata.org/wiki/Q15408477#P737"
+   ]
+  },
+  {
+   "from": "Scala",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "Prolog",
+   "to": "Erlang",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Erlang_(programming_language)",
+    "https://www.wikidata.org/wiki/Q334879#P737"
+   ]
+  },
+  {
+   "from": "Prolog",
+   "to": "Mercury",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mercury_(programming_language)",
+    "https://www.wikidata.org/wiki/Q206040#P737"
+   ]
+  },
+  {
+   "from": "Prolog",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "Elixir",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Elixir_(programming_language)",
+    "https://www.wikidata.org/wiki/Q5362035#P737"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "LFE",
+   "sources": [
+    "https://en.wikipedia.org/wiki/LFE_(programming_language)"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "Scala",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Scala_(programming_language)",
+    "https://www.wikidata.org/wiki/Q460584#P737"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "Erlang",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Elixir",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Elixir_(programming_language)",
+    "https://www.wikidata.org/wiki/Q5362035#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "PHP",
+   "sources": [
+    "https://en.wikipedia.org/wiki/PHP_(programming_language)",
+    "https://www.wikidata.org/wiki/Q59#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "Python",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q28865#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "Raku",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Raku_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2052676#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "PowerShell",
+   "sources": [
+    "https://en.wikipedia.org/wiki/PowerShell",
+    "https://www.wikidata.org/wiki/Q840410#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Perl",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Ruby",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ruby_(programming_language)",
+    "https://www.wikidata.org/wiki/Q161053#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Nim",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nim_(programming_language)",
+    "https://www.wikidata.org/wiki/Q20080327#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Boo",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Boo_(programming_language)",
+    "https://www.wikidata.org/wiki/Q892948#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Mojo",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mojo_(programming_language)",
+    "https://www.wikidata.org/wiki/Q118152673#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "CoffeeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/CoffeeScript",
+    "https://www.wikidata.org/wiki/Q1106819#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "GDScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/GDScript"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Solidity",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Solidity_(programming_language)"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Groovy",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Groovy_(programming_language)",
+    "https://www.wikidata.org/wiki/Q504453#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Starlark",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Starlark"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Hy",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q22661291#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Kotlin",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q3816639#P737"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "Swift",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+    "https://www.wikidata.org/wiki/Q17118377#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Crystal",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Crystal_(programming_language)",
+    "https://www.wikidata.org/wiki/Q21921428#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Groovy",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Groovy_(programming_language)",
+    "https://www.wikidata.org/wiki/Q504453#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "CoffeeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/CoffeeScript",
+    "https://www.wikidata.org/wiki/Q1106819#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Mirah",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mirah_(programming_language)",
+    "https://www.wikidata.org/wiki/Q3858763#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Rust",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "https://www.wikidata.org/wiki/Q575650#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Swift",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Swift_(programming_language)",
+    "https://www.wikidata.org/wiki/Q17118377#P737"
+   ]
+  },
+  {
+   "from": "Ruby",
+   "to": "Clojure",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Clojure_(programming_language)"
+   ]
+  },
+  {
+   "from": "Lua",
+   "to": "JavaScript",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q2005#P737"
+   ]
+  },
+  {
+   "from": "Lua",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Lua",
+   "to": "Io",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Io_(programming_language)",
+    "https://www.wikidata.org/wiki/Q756175#P737"
+   ]
+  },
+  {
+   "from": "CoffeeScript",
+   "to": "LiveScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/LiveScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q16963446#P737"
+   ]
+  },
+  {
+   "from": "JavaScript",
+   "to": "TypeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/TypeScript_(programming_language)",
+    "https://www.wikidata.org/wiki/Q978185#P737"
+   ]
+  },
+  {
+   "from": "JavaScript",
+   "to": "ActionScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/ActionScript",
+    "https://www.wikidata.org/wiki/Q234657#P737"
+   ]
+  },
+  {
+   "from": "JavaScript",
+   "to": "CoffeeScript",
+   "sources": [
+    "https://en.wikipedia.org/wiki/CoffeeScript",
+    "https://www.wikidata.org/wiki/Q1106819#P737"
+   ]
+  },
+  {
+   "from": "JavaScript",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)",
+    "https://www.wikidata.org/wiki/Q406009#P737"
+   ]
+  },
+  {
+   "from": "JavaScript",
+   "to": "Solidity",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Solidity_(programming_language)"
+   ]
+  },
+  {
+   "from": "TypeScript",
+   "to": "Dart",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dart_(programming_language)"
+   ]
+  },
+  {
+   "from": "Scala",
+   "to": "Kotlin",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kotlin_(programming_language)",
+    "https://www.wikidata.org/wiki/Q3816639#P737"
+   ]
+  },
+  {
+   "from": "Scala",
+   "to": "Ceylon",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ceylon_(programming_language)",
+    "https://www.wikidata.org/wiki/Q93482#P737"
+   ]
+  },
+  {
+   "from": "Groovy",
+   "to": "Kotlin",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q3816639#P737"
+   ]
+  },
+  {
+   "from": "PHP",
+   "to": "Hack",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hack_(programming_language)",
+    "https://www.wikidata.org/wiki/Q15971618#P737"
+   ]
+  },
+  {
+   "from": "Tcl",
+   "to": "PHP",
+   "sources": [
+    "https://www.wikidata.org/wiki/Q59#P737"
+   ]
+  },
+  {
+   "from": "APL",
+   "to": "J",
+   "sources": [
+    "https://en.wikipedia.org/wiki/J_(programming_language)",
+    "https://www.wikidata.org/wiki/Q383994#P737"
+   ]
+  },
+  {
+   "from": "MATLAB",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "R",
+   "to": "Julia",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Julia_(programming_language)",
+    "https://www.wikidata.org/wiki/Q2613697#P737"
+   ]
+  },
+  {
+   "from": "Forth",
+   "to": "Factor",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Factor_(programming_language)",
+    "https://www.wikidata.org/wiki/Q1391724#P737"
+   ]
+  },
+  {
+   "from": "Rebol",
+   "to": "Red",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Red_(programming_language)",
+    "https://www.wikidata.org/wiki/Q3217187#P737"
+   ]
+  },
+  {
+   "from": "Scheme",
+   "to": "Dylan",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Dylan_(programming_language)"
+   ]
+  },
+  {
+   "from": "Python",
+   "to": "F#",
+   "sources": [
+    "https://en.wikipedia.org/wiki/F_Sharp_(programming_language)",
+    "https://www.wikidata.org/wiki/Q648619#P737"
+   ]
+  },
+  {
+   "from": "Rust",
+   "to": "Carbon",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Carbon_(programming_language)",
+    "https://www.wikidata.org/wiki/Q113157814#P737"
+   ]
+  }
+ ]
+}

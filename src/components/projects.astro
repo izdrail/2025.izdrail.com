@@ -3,7 +3,7 @@ interface Project {
   title: string;
   image: ImageMetadata | string;
   link: string;
-  preview: string;
+  preview?: string;
   status: string;
   description?: string;
 }
@@ -14,7 +14,6 @@ const projects: Project[] = [
     image:
       "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop",
     link: "https://github.com/izdrail/editor.izdrail.com",
-    preview: "https://editor.izdrail.com",
     status: "Code Editor",
     description:
       "My side project where I am spending my tokens: a native code editor written in Rust (a Lapce derivative) with AI chat and reviewed edits built in.",
@@ -40,7 +39,7 @@ const projects: Project[] = [
         projects.map((project) => (
           <div class="group">
             <a
-              href={project.preview}
+              href={project.preview ?? project.link}
               target="_blank"
               rel="noopener noreferrer"
               class="block"
@@ -93,6 +92,7 @@ const projects: Project[] = [
                       <path d="M24 12L18.3431 17.6569L16.9289 16.2426L21.1716 12L16.9289 7.75736L18.3431 6.34315L24 12ZM2.82843 12L7.07107 16.2426L5.65685 17.6569L0 12L5.65685 6.34315L7.07107 7.75736L2.82843 12ZM9.78845 21H7.66009L14.2116 3H16.3399L9.78845 21Z" />
                     </svg>
                   </a>
+                  {project.preview && (
                   <a
                     target="_blank"
                     href={project.preview}
@@ -109,6 +109,7 @@ const projects: Project[] = [
                       <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z" />
                     </svg>
                   </a>
+                  )}
                 </div>
               </div>
             </a>

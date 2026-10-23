@@ -20,7 +20,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
       {
         posts.length === 0 ? (
           <p class="mt-12 text-[var(--white-icon)]">
-            First post is being typed. Check back tomorrow.
+            First post is being prepared.
           </p>
         ) : (
           <ul class="mt-12 space-y-8">

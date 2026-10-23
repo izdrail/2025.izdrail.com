@@ -1,5 +1,18 @@
 import { useRef, useEffect } from "react";
 
+// Personal easter eggs that occasionally surface in the glitch field
+// (Stefan's own words: "stefan, developer, moldavian, keen on saving
+// water, leftist views"). Rendered uppercase to match the glitch alphabet.
+const EASTER_EGGS = [
+  "STEFAN",
+  "DEVELOPER",
+  "MOLDAVIAN",
+  "KEEN ON SAVING WATER",
+  "LEFTIST VIEWS",
+];
+const EGG_COLOR = "#A476FF";
+const EGG_HOLD_MS = 4000;
+
 const LetterGlitch = ({
   glitchColors = ["#5e4491", "#A476FF", "#241a38"],
   glitchSpeed = 33,
@@ -26,6 +39,10 @@ const LetterGlitch = ({
   const grid = useRef({ columns: 0, rows: 0 });
   const context = useRef<CanvasRenderingContext2D | null>(null);
   const lastGlitchTime = useRef(Date.now());
+  const egg = useRef<{ start: number; len: number; until: number } | null>(
+    null,
+  );
+  const nextEggAt = useRef(Date.now() + 3000);
 
   const fontSize = 16;
   const charWidth = 10;
@@ -138,6 +155,8 @@ const LetterGlitch = ({
   };
 
   const initializeLetters = (columns: number, rows: number) => {
+    egg.current = null;
+    nextEggAt.current = Date.now() + 3000;
     grid.current = { columns, rows };
     const totalLetters = columns * rows;
     letters.current = Array.from({ length: totalLetters }, () => ({
@@ -188,6 +207,29 @@ const LetterGlitch = ({
     });
   };
 
+  const placeEgg = (now: number) => {
+    const { columns, rows } = grid.current;
+    const word =
+      EASTER_EGGS[Math.floor(Math.random() * EASTER_EGGS.length)];
+    if (columns < word.length + 2 || rows < 2) {
+      nextEggAt.current = now + 5000;
+      return;
+    }
+    const col = 1 + Math.floor(Math.random() * (columns - word.length - 1));
+    const row = Math.floor(Math.random() * rows);
+    const start = row * columns + col;
+    for (let i = 0; i < word.length; i++) {
+      const cell = letters.current[start + i];
+      if (!cell) return;
+      cell.char = word[i];
+      cell.color = EGG_COLOR;
+      cell.targetColor = EGG_COLOR;
+      cell.colorProgress = 1;
+    }
+    egg.current = { start, len: word.length, until: now + EGG_HOLD_MS };
+    drawLetters();
+  };
+
   const updateLetters = () => {
     if (!letters.current || letters.current.length === 0) return; // Prevent accessing empty array
 
@@ -196,6 +238,9 @@ const LetterGlitch = ({
     for (let i = 0; i < updateCount; i++) {
       const index = Math.floor(Math.random() * letters.current.length);
       if (!letters.current[index]) continue; // Skip if index is invalid
+      // leave an active easter egg untouched while it is on display
+      const eg = egg.current;
+      if (eg && index >= eg.start && index < eg.start + eg.len) continue;
 
       letters.current[index].char = getRandomChar();
       letters.current[index].targetColor = getRandomColor();
@@ -236,6 +281,13 @@ const LetterGlitch = ({
 
   const animate = () => {
     const now = Date.now();
+    if (egg.current && now >= egg.current.until) {
+      // dissolve back into the glitch field, schedule the next appearance
+      egg.current = null;
+      nextEggAt.current = now + 8000 + Math.random() * 6000;
+    } else if (!egg.current && now >= nextEggAt.current) {
+      placeEgg(now);
+    }
     if (now - lastGlitchTime.current >= glitchSpeed) {
       updateLetters();
       drawLetters();

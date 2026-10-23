@@ -342,7 +342,9 @@ export default function LanguageUniverse() {
       syncLinePositions();
 
       // rotation state
-      let rotX = -0.15;
+      const DEFAULT_ROT_X = -0.15;
+      let rotX = DEFAULT_ROT_X;
+      let rotXFrom = DEFAULT_ROT_X; // tilt eased back to neutral on layout change
       let rotY = 0.6;
       let velX = 0;
       let velY = 0.0016; // idle spin
@@ -379,6 +381,7 @@ export default function LanguageUniverse() {
         from = Float32Array.from(current);
         target = computePositions(m);
         t0 = performance.now();
+        rotXFrom = rotX; // recenter any focus tilt over the transition
       }
 
       function project(i: number, w: number, h: number) {
@@ -566,6 +569,9 @@ export default function LanguageUniverse() {
           // ease back toward idle spin
           if (Math.abs(velY) > 0.0016) velY *= 0.985;
           rotX = Math.max(-1.3, Math.min(1.3, rotX));
+          // during a layout transition, ease tilt back to neutral so the
+          // cloud re-centers after a search-focus changed the camera
+          if (k < 1) rotX = rotXFrom + (DEFAULT_ROT_X - rotXFrom) * e;
         }
         scene.rotation.y = rotY;
         scene.rotation.x = rotX;

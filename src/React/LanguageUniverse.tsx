@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import data from "../data/languages.json";
 
 type Lang = { n: string; c: string | null; d: string; f: string; k?: string };
-type Mode = "domain" | "family";
+type Mode = "domain" | "family" | "brain";
 
 const LANGS = data.languages as Lang[];
 const DOMAIN_LABELS = data.domains as Record<string, string>;
@@ -91,6 +91,42 @@ function computePositions(mode: Mode | "az"): Float32Array {
     }
     return pos;
   }
+  if (mode === "brain") {
+    // brain silhouette: fibonacci sphere deformed into two hemispheres with a
+    // longitudinal fissure, flatter vertically, tapered frontal lobe
+    const n = LANGS.length;
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const R = 6.2;
+    for (let i = 0; i < n; i++) {
+      const y0 = n === 1 ? 0 : 1 - (i / (n - 1)) * 2;
+      const r0 = Math.sqrt(Math.max(0, 1 - y0 * y0));
+      const th = golden * i;
+      let x = Math.cos(th) * r0;
+      let y = y0;
+      let z = Math.sin(th) * r0;
+      const rnd = mulberry32(hashStr(LANGS[i].n + "brain"));
+      x *= R * 1.02;
+      y *= R * 0.74;
+      z *= R * 0.88;
+      // groove between hemispheres, deepest near the top
+      const groove = Math.max(0, 1 - Math.abs(y) / (R * 0.8));
+      const minGap = 0.55 * groove + 0.18;
+      if (Math.abs(x) < minGap) x = (x >= 0 ? 1 : -1) * (minGap + rnd() * 0.15);
+      // frontal taper toward z+
+      if (z > 0) {
+        const f = z / (R * 0.88);
+        x *= 1 - 0.18 * f * f;
+        y *= 1 - 0.1 * f * f;
+      }
+      x += (rnd() - 0.5) * 0.35;
+      y += (rnd() - 0.5) * 0.3;
+      z += (rnd() - 0.5) * 0.35;
+      pos[i * 3] = x;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = z;
+    }
+    return pos;
+  }
   const keyOf = (l: Lang) => (mode === "domain" ? l.d : l.f);
   const keys = Array.from(new Set(LANGS.map(keyOf)));
   const counts = new Map<string, number>();
@@ -175,6 +211,7 @@ void main() {
 `;
 
 const MODES: { id: Mode | "az"; label: string }[] = [
+  { id: "brain", label: "Brain" },
   { id: "domain", label: "By domain" },
   { id: "family", label: "By family" },
   { id: "az", label: "A-Z" },
@@ -183,7 +220,7 @@ const MODES: { id: Mode | "az"; label: string }[] = [
 export default function LanguageUniverse() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [mode, setMode] = useState<Mode | "az">("domain");
+  const [mode, setMode] = useState<Mode | "az">("brain");
   const [selected, setSelected] = useState<Lang | null>(null);
   const [query, setQuery] = useState("");
   const [glFailed, setGlFailed] = useState(false);
@@ -263,7 +300,7 @@ export default function LanguageUniverse() {
         phases[i] = rnd() * Math.PI * 2;
       });
 
-      const startPos = computePositions("domain");
+      const startPos = computePositions("brain");
       const geometry = new Geometry(gl, {
         position: { size: 3, data: startPos },
         aColor: { size: 3, data: colors },
@@ -294,8 +331,11 @@ export default function LanguageUniverse() {
         if (ia != null && ib != null && ia !== ib) edges.push([ia, ib]);
       }
       const E = edges.length;
-      const linePos = new Float32Array(E * 6);
-      const lineAlpha = new Float32Array(E * 2);
+      const SEG = 5; // segments per edge - squiggly links
+      const edgePhase = new Float32Array(E);
+      for (let e = 0; e < E; e++) edgePhase[e] = mulberry32(0x9e37 + e)() * Math.PI * 2;
+      const linePos = new Float32Array(E * SEG * 6);
+      const lineAlpha = new Float32Array(E * SEG * 2);
       const lineGeometry = new Geometry(gl, {
         position: { size: 3, data: linePos },
         aAlpha: { size: 1, data: lineAlpha },
@@ -330,12 +370,30 @@ export default function LanguageUniverse() {
       function syncLinePositions() {
         for (let e = 0; e < E; e++) {
           const [ia, ib] = edges[e];
-          linePos[e * 6] = current[ia * 3];
-          linePos[e * 6 + 1] = current[ia * 3 + 1];
-          linePos[e * 6 + 2] = current[ia * 3 + 2];
-          linePos[e * 6 + 3] = current[ib * 3];
-          linePos[e * 6 + 4] = current[ib * 3 + 1];
-          linePos[e * 6 + 5] = current[ib * 3 + 2];
+          const ax = current[ia * 3], ay = current[ia * 3 + 1], az = current[ia * 3 + 2];
+          const bx = current[ib * 3], by = current[ib * 3 + 1], bz = current[ib * 3 + 2];
+          const dx = bx - ax, dy = by - ay, dz = bz - az;
+          const len = Math.hypot(dx, dy, dz) || 1e-6;
+          // perpendicular basis for the wiggle
+          let px = -dz / len, py = 0, pz = dx / len;
+          let pl = Math.hypot(px, pz);
+          if (pl < 1e-4) { px = 1; pz = 0; pl = 1; }
+          px /= pl; pz /= pl;
+          const qx = (dy * pz - dz * py) / len, qy = (dz * px - dx * pz) / len, qz = (dx * py - dy * px) / len;
+          const amp = Math.min(0.35, len * 0.1);
+          const ph = edgePhase[e];
+          const base = e * SEG * 6;
+          for (let sg = 0; sg < SEG; sg++) {
+            for (let k = 0; k < 2; k++) {
+              const t = (sg + k) / SEG;
+              const w1 = Math.sin(t * Math.PI * 3 + ph) * amp;
+              const w2 = Math.cos(t * Math.PI * 3 + ph) * amp * 0.55;
+              const o = base + (sg * 2 + k) * 3;
+              linePos[o] = ax + dx * t + px * w1 + qx * w2;
+              linePos[o + 1] = ay + dy * t + py * w1 + qy * w2;
+              linePos[o + 2] = az + dz * t + pz * w1 + qz * w2;
+            }
+          }
         }
         lineGeometry.attributes.position.needsUpdate = true;
       }
@@ -365,8 +423,7 @@ export default function LanguageUniverse() {
         const active = hovering >= 0 ? hovering : selectedIdx;
         for (let e = 0; e < E; e++) {
           const on = active >= 0 && (edges[e][0] === active || edges[e][1] === active);
-          lineAlpha[e * 2] = on ? 1 : 0;
-          lineAlpha[e * 2 + 1] = on ? 1 : 0;
+          for (let k = 0; k < SEG * 2; k++) lineAlpha[e * SEG * 2 + k] = on ? 1 : 0;
         }
         lineGeometry.attributes.aAlpha.needsUpdate = true;
       }

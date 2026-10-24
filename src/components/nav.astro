@@ -53,6 +53,7 @@ const isActive = (href: string) =>
             <li>
               <a
                 href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
                 class:list={[
                   "text-sm transition-colors pb-1",
                   isActive(item.href)

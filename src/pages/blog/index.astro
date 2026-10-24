@@ -29,7 +29,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
           <ul class="mt-12 space-y-8">
             {posts.map((post) => (
               <li class="rounded-2xl border border-[var(--white-icon-tr)] bg-[var(--card)] p-6 hover:border-[var(--sec)] transition-colors">
-                <a href={`/blog/${post.id}`} class="block">
+                <a href={`/blog/${post.slug}`} class="block">
                   <time
                     class="text-sm text-[var(--sec)]"
                     datetime={post.data.pubDate.toISOString()}

@@ -718,8 +718,8 @@ export default function LanguageUniverse({
         canvas.addEventListener("pointerdown", wake);
         canvas.addEventListener("wheel", onWheel, { passive: false });
         canvas.style.cursor = "grab";
-        // horizontal swipes rotate the cloud, vertical swipes still scroll the page
-        canvas.style.touchAction = "pan-y";
+        // horizontal swipes rotate the cloud, vertical swipes scroll the page, two-finger pinch keeps native page zoom
+        canvas.style.touchAction = "pan-y pinch-zoom";
       }
 
       // decorative (page-background) brains render until the scene settles,

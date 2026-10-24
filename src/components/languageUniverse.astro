@@ -10,15 +10,25 @@ import PageBackdrop from "../React/PageBackdrop.tsx";
 >
   <PageBackdrop client:visible />
   <div class="max-w-5xl mx-auto">
-    <h2 class="text-3xl md:text-4xl font-semibold mb-3">
-      A Universe of Languages
-    </h2>
-    <p class="text-[var(--white-icon)] max-w-3xl mb-6">
-      572 languages in one interactive 3D space, with lines linking languages
-      that influenced each other. Drag to rotate, scroll to zoom, search for a
-      language, hover a point to light up its connections, or rearrange it as
-      a brain, by domain, family or A-Z. The bright purple points are the ones I work with.
-    </p>
+    <div class="relative max-w-3xl mb-6">
+      {/* soft legibility veil: mutes the backdrop letters behind the text
+          only, leaving the rest of the section backdrop untouched */}
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute -inset-x-3 -inset-y-2 rounded-3xl bg-[#050816cc] blur-lg"
+      >
+      </div>
+      <h2 class="relative text-3xl md:text-4xl font-semibold mb-3">
+        A Universe of Languages
+      </h2>
+      <p class="relative text-[var(--white-icon)]">
+        572 languages in one interactive 3D space, with lines linking
+        languages that influenced each other. Drag to rotate, scroll to zoom,
+        search for a language, hover a point to light up its connections, or
+        rearrange it as a brain, by domain, family or A-Z. The bright purple
+        points are the ones I work with.
+      </p>
+    </div>
     <div
       class="h-[420px] md:h-[560px] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
     >

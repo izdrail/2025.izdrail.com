@@ -331,7 +331,25 @@ const LetterGlitch = ({
 
     context.current = canvas.getContext("2d");
     resizeCanvas();
-    animate();
+
+    // prefers-reduced-motion: paint one static frame, no glitch loop or eggs
+    const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (motionMq.matches) {
+      drawLetters();
+    } else {
+      animate();
+    }
+
+    const handleMotionChange = (e: MediaQueryListEvent) => {
+      cancelAnimationFrame(animationRef.current as number);
+      if (e.matches) {
+        drawLetters();
+      } else {
+        lastGlitchTime.current = Date.now();
+        animate();
+      }
+    };
+    motionMq.addEventListener("change", handleMotionChange);
 
     let resizeTimeout: NodeJS.Timeout;
 
@@ -340,7 +358,11 @@ const LetterGlitch = ({
       resizeTimeout = setTimeout(() => {
         cancelAnimationFrame(animationRef.current as number);
         resizeCanvas();
-        animate();
+        if (motionMq.matches) {
+          drawLetters();
+        } else {
+          animate();
+        }
       }, 100);
     };
 
@@ -349,6 +371,7 @@ const LetterGlitch = ({
     return () => {
       cancelAnimationFrame(animationRef.current!);
       window.removeEventListener("resize", handleResize);
+      motionMq.removeEventListener("change", handleMotionChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [glitchSpeed, smooth]);

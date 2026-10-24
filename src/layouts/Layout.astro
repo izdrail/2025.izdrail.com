@@ -102,6 +102,13 @@ const fullTitle =
     </noscript>
 
     <title>{fullTitle}</title>
+    <slot name="head" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Software Developer - Blog"
+      href="/rss.xml"
+    />
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">

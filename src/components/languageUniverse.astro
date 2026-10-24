@@ -1,12 +1,14 @@
 ---
 import LanguageUniverse from "../React/LanguageUniverse.tsx";
+import PageBackdrop from "../React/PageBackdrop.tsx";
 ---
 
 <section
-  class="text-[var(--white)] py-12"
+  class="relative isolate overflow-hidden text-[var(--white)] py-12"
   id="languages"
   aria-label="Interactive universe of programming languages"
 >
+  <PageBackdrop client:visible />
   <div class="max-w-5xl mx-auto">
     <h2 class="text-3xl md:text-4xl font-semibold mb-3">
       A Universe of Languages

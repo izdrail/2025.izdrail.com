@@ -3,19 +3,21 @@ import LetterGlitch from "./LetterGlitch";
 import LanguageUniverse from "./LanguageUniverse";
 
 /**
- * Fixed page backdrop for the home page: the hero's letter-glitch field
- * (personal easter eggs included) spread across the whole viewport, with
- * slowly rotating decorative brains floating over it. Everything is
- * pointer-events-none and aria-hidden; page content scrolls above it.
+ * Backdrop for the language-universe section only: the letter-glitch field
+ * (personal easter eggs included) behind the brain card, with slowly
+ * rotating decorative brains floating over it. Scoped to the section per
+ * the owner's correction - the rest of the page keeps its plain
+ * background. Everything is pointer-events-none and aria-hidden; section
+ * content paints above it (the section is an isolated stacking context).
  * The brains reuse the accepted universe render in decorative mode, dimmed
- * so body text stays readable; each renders a settled still and then stops
- * its animation loop, so they cost no continuous GPU work. The second brain
+ * so text stays readable; each renders a settled still and then stops its
+ * animation loop, so they cost no continuous GPU work. The second brain
  * only mounts on wide viewports - one extra scene is enough on a phone.
  */
 export default function PageBackdrop() {
   const [wide, setWide] = useState(false);
-  // stays false under prefers-reduced-motion: the whole animated backdrop
-  // simply never mounts, leaving the page with its original plain background
+  // stays false under prefers-reduced-motion: the animated contents never
+  // mount, leaving the section with its original plain background
   const [motionOk, setMotionOk] = useState(false);
 
   useEffect(() => {
@@ -34,13 +36,17 @@ export default function PageBackdrop() {
     };
   }, []);
 
-  if (!motionOk) return null;
-
+  // the outer container renders even before hydration and under
+  // prefers-reduced-motion: client:visible observes the island, and an
+  // island that SSRs to zero children has no box, so the observer would
+  // never fire. Only the animated contents are gated on motionOk.
   return (
     <div
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       aria-hidden="true"
     >
+      {motionOk && (
+        <>
       {/* letter field across the whole page, dimmer than the hero/card
           versions so body text stays readable. Slower ticks and no smooth
           color fades: the full-field redraw is the one continuous cost of
@@ -65,6 +71,8 @@ export default function PageBackdrop() {
         <div className="absolute -right-56 bottom-[2%] h-[640px] w-[640px] opacity-[0.24]">
           <LanguageUniverse decorative initialRotY={3.6} />
         </div>
+      )}
+        </>
       )}
     </div>
   );

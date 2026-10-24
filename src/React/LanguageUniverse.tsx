@@ -507,7 +507,7 @@ export default function LanguageUniverse({
 
       // layout transitions (CPU lerp)
       let from: Float32Array = Float32Array.from(startPos);
-      let target = Float32Array.from(startPos);
+      let target: Float32Array = Float32Array.from(startPos);
       let t0 = performance.now();
       const DUR = 900;
       const current = geometry.attributes.position.data as Float32Array;

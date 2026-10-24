@@ -529,6 +529,7 @@ function Chatbot() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result !== "string") return;
+      const preview = reader.result;
       setComposerAttachments((prev) => [
         ...prev,
         {
@@ -536,7 +537,7 @@ function Chatbot() {
           name: file.name || `pasted-image-${prev.length + 1}.png`,
           type: file.type,
           size: file.size,
-          preview: reader.result,
+          preview,
         },
       ]);
     };

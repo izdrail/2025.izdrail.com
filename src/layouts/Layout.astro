@@ -379,7 +379,7 @@ const fullTitle =
     ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
+      function gtag(..._args: unknown[]) {
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
@@ -593,7 +593,7 @@ const fullTitle =
 </style>
 <!-- TikTok Pixel Code Start -->
 <script>
-  !(function (w, d, t) {
+  void (function (w, d, t) {
     w.TiktokAnalyticsObject = t;
     var ttq = (w[t] = w[t] || []);
     ((ttq.methods = [

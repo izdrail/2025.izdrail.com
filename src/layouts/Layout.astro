@@ -464,6 +464,16 @@ const fullTitle =
     scroll-margin-top: 5rem;
   }
 
+  /* Keyboard users get a visible brand ring wherever a component has not
+     already set its own (chat buttons, universe canvas and mode tabs define
+     more specific :focus-visible rules that win over this catch-all). */
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--sec);
+    outline-offset: 2px;
+  }
+
   body::before {
     content: "";
     position: fixed;

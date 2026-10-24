@@ -99,3 +99,16 @@ test("blog sitemap excludes drafts by construction", () => {
   const rss = read("src/pages/rss.xml.ts");
   assert.match(rss, /!data\.draft/);
 });
+
+test("every keyboard-focusable element gets a visible focus ring by default", () => {
+  const layout = read("src/layouts/Layout.astro");
+  assert.match(
+    layout,
+    /a:focus-visible,[\s\S]*button:focus-visible[\s\S]*outline:\s*2px solid var\(--sec\)/,
+  );
+});
+
+test("Escape closes the language detail card", () => {
+  const src = read("src/React/LanguageUniverse.tsx");
+  assert.match(src, /e\.key === "Escape"\) setSelected\(null\)/);
+});

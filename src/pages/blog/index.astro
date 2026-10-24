@@ -14,7 +14,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   description="Notes and funny takes on tech news, from a backend developer who has been building software since 2010."
 >
   <Nav />
-  <main class="min-h-screen pt-24 md:pt-28 pb-24 px-4">
+  <main id="main-content" class="min-h-screen pt-24 md:pt-28 pb-24 px-4">
     <div class="max-w-3xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold text-[var(--white)]">Blog</h1>
       <p class="mt-4 text-lg text-[var(--white-icon)]">

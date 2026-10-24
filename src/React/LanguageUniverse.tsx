@@ -324,6 +324,16 @@ export default function LanguageUniverse({
     apiRef.current?.setMode(mode);
   }, [mode]);
 
+  // Esc closes the language detail card (keyboard parity with the × button)
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selected]);
+
   useEffect(() => {
     let destroyed = false;
     let raf = 0;
@@ -891,7 +901,7 @@ export default function LanguageUniverse({
             {suggestions.map((l) => (
               <li key={l.n}>
                 <button
-                  className="w-full text-left px-4 py-2 text-sm text-[var(--white)] hover:bg-[#ffffff12] flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--white)] hover:bg-[#ffffff12] focus-visible:bg-[#ffffff12] focus-visible:outline-2 focus-visible:outline-[var(--sec)] flex items-center gap-2"
                   onClick={() => {
                     apiRef.current?.focus(l.n);
                     setQuery("");
@@ -948,7 +958,7 @@ export default function LanguageUniverse({
                     <button
                       key={name}
                       onClick={() => apiRef.current?.focus(name)}
-                      className="mr-1.5 rounded-full border border-[var(--white-icon-tr)] px-2 py-0.5 text-[var(--white)] hover:border-[var(--sec)] hover:text-[var(--sec)] transition-colors"
+                      className="mr-1.5 rounded-full border border-[var(--white-icon-tr)] px-2 py-0.5 text-[var(--white)] hover:border-[var(--sec)] hover:text-[var(--sec)] focus-visible:border-[var(--sec)] focus-visible:outline-2 focus-visible:outline-[var(--sec)] transition-colors"
                     >
                       {name}
                     </button>
@@ -974,10 +984,11 @@ export default function LanguageUniverse({
           <button
             key={m.id}
             onClick={() => setMode(m.id)}
-            className={`px-4 py-2 text-xs whitespace-nowrap transition-colors ${
+            aria-pressed={mode === m.id}
+            className={`px-4 py-2 text-xs whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-[var(--sec)] ${
               mode === m.id
                 ? "bg-[var(--sec)] text-[#050816] font-semibold"
-                : "text-[var(--white)] hover:bg-[#ffffff14]"
+                : "text-[var(--white)] hover:bg-[#ffffff14] focus-visible:bg-[#ffffff14]"
             }`}
           >
             {m.label}

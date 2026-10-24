@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --test tests/regression.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.30",

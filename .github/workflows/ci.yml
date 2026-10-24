@@ -1,0 +1,24 @@
+# Durable guard for the astro-check type baseline and the regression suite.
+# Runs on the repo's self-hosted runner, pushes to main only.
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # astro check exits 1 on any error, 0 when only informational hints remain
+      - run: npm run check
+      - run: npm test

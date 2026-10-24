@@ -51,6 +51,48 @@ test("keyboard access: skip link, main landmark, nav aria-current, mode aria-pre
   assert.match(uni, /aria-pressed=\{mode === m\.id\}/);
 });
 
+test("3D scene respects prefers-reduced-motion", () => {
+  const src = read("src/React/LanguageUniverse.tsx");
+  assert.match(src, /prefers-reduced-motion:\s*reduce/);
+  assert.match(src, /const k = reducedMotion \? 1 :/);
+});
+
+test("3D scene is keyboard operable without trapping page keys", () => {
+  const src = read("src/React/LanguageUniverse.tsx");
+  assert.match(src, /tabIndex=\{decorative \? undefined : 0\}/);
+  assert.match(src, /onKeyDown=/);
+  assert.match(src, /nudge:/);
+});
+
+test("skip link target can actually receive focus", () => {
+  for (const page of [
+    "src/pages/index.astro",
+    "src/pages/chat.astro",
+    "src/pages/404.astro",
+    "src/pages/privacy.astro",
+    "src/pages/terms.astro",
+    "src/pages/blog/index.astro",
+    "src/pages/blog/[...slug].astro",
+  ]) {
+    assert.match(read(page), /id="main-content" tabindex="-1"/, page);
+  }
+});
+
+test("chat buttons get a visible keyboard focus ring", () => {
+  assert.match(
+    read("src/styles/chat.css"),
+    /button:focus-visible[\s\S]*outline: 2px solid var\(--chat-sec\)/,
+  );
+});
+
+test("smooth-scroll hijack does not swallow the skip link", () => {
+  assert.match(
+    read("src/components/nav.astro"),
+    /a\[href\^="#":\]:not\(\[href="#main-content"\]\)/.source
+      ? /:not\(\[href="#main-content"\]\)/ : /never/,
+  );
+});
+
 test("blog sitemap excludes drafts by construction", () => {
   const sm = read("src/pages/sitemap.xml.ts");
   assert.match(sm, /!data\.draft/);

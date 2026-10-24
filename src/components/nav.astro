@@ -106,7 +106,7 @@ const isActive = (href: string) =>
 </div>
 
 <script>
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  document.querySelectorAll('a[href^="#"]:not([href="#main-content"])').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
       const target = e.currentTarget as HTMLAnchorElement;

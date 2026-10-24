@@ -522,3 +522,11 @@
 .chat-model-select > ul > li[aria-selected="true"] {
   color: var(--chat-sec);
 }
+
+/* keyboard focus parity: every chat button gets the same brand focus ring
+   the model picker already had */
+.chat-page-container button:focus-visible,
+.chat-container button:focus-visible {
+  outline: 2px solid var(--chat-sec);
+  outline-offset: 1px;
+}

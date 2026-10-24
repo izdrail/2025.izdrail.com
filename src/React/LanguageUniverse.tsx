@@ -308,6 +308,7 @@ export default function LanguageUniverse({
     setMode: (m: Mode | "az") => void;
     focus: (name: string) => void;
     pickAt: (px: number, py: number) => Lang | null;
+    nudge: (dRotY: number, dRotX: number, dCam: number) => void;
   } | null>(null);
 
   const suggestions = useMemo(() => {
@@ -550,6 +551,15 @@ export default function LanguageUniverse({
       let rotY = initialRotY ?? 1.2; // open on the 3/4 view: fissure + cerebellum read immediately
       let velX = 0;
       let velY = 0.0016; // idle spin
+      // prefers-reduced-motion: no idle spin, no twinkle clock, instant
+      // layout transitions and zoom. Direct user input (drag, search
+      // focus, keyboard nudge) still repositions the scene.
+      const motionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let reducedMotion = motionMq.matches;
+      const onMotionPref = () => {
+        reducedMotion = motionMq.matches;
+      };
+      motionMq.addEventListener("change", onMotionPref);
       // wheel zoom: camera distance along z, eased toward camTarget
       let camDist = 19;
       let camTarget = 19;
@@ -652,6 +662,17 @@ export default function LanguageUniverse({
         pickAt: (px, py) => {
           const idx = pick(px, py);
           return idx >= 0 ? LANGS[idx] : null;
+        },
+        // keyboard operation: discrete rotate/zoom steps while the canvas
+        // has focus. No key capture outside the focused canvas.
+        nudge: (dRotY: number, dRotX: number, dCam: number) => {
+          rotY += dRotY;
+          rotX = Math.max(-1.3, Math.min(1.3, rotX + dRotX));
+          camTarget = Math.max(CAM_MIN, Math.min(CAM_MAX, camTarget + dCam));
+          if (reducedMotion) {
+            camDist = camTarget;
+            camera.position.z = camDist;
+          }
         },
       };
 
@@ -761,10 +782,10 @@ export default function LanguageUniverse({
       function frame(now: number) {
         if (!decoSettled) raf = requestAnimationFrame(frame);
         if (!visible) return;
-        program.uniforms.uTime.value = (now - start) / 1000;
+        if (!reducedMotion) program.uniforms.uTime.value = (now - start) / 1000;
 
         // transition
-        const k = Math.min(1, (now - t0) / DUR);
+        const k = reducedMotion ? 1 : Math.min(1, (now - t0) / DUR);
         const e = 1 - Math.pow(1 - k, 3);
         if (k < 1) {
           for (let i = 0; i < current.length; i++)
@@ -777,8 +798,10 @@ export default function LanguageUniverse({
 
         // rotation
         if (!dragging) {
-          rotY += velY;
-          rotX += velX;
+          if (!reducedMotion) {
+            rotY += velY;
+            rotX += velX;
+          }
           velX *= 0.96;
           // ease back toward idle spin
           if (Math.abs(velY) > 0.0016) velY *= 0.985;
@@ -791,7 +814,10 @@ export default function LanguageUniverse({
         scene.rotation.x = rotX;
 
         // zoom easing
-        if (Math.abs(camTarget - camDist) > 0.0005) {
+        if (reducedMotion) {
+          camDist = camTarget;
+          camera.position.z = camDist;
+        } else if (Math.abs(camTarget - camDist) > 0.0005) {
           camDist += (camTarget - camDist) * 0.14;
           camera.position.z = camDist;
         }
@@ -825,6 +851,7 @@ export default function LanguageUniverse({
         cancelAnimationFrame(raf);
         ro.disconnect();
         io.disconnect();
+        motionMq.removeEventListener("change", onMotionPref);
         canvas.removeEventListener("pointerdown", onDown);
         canvas.removeEventListener("wheel", onWheel);
         window.removeEventListener("pointermove", onMove);
@@ -878,7 +905,40 @@ export default function LanguageUniverse({
           />
         </div>
       )}
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full rounded-2xl focus-visible:outline-2 focus-visible:outline-[var(--sec)]"
+        tabIndex={decorative ? undefined : 0}
+        aria-label={
+          decorative
+            ? undefined
+            : "Interactive 3D universe of programming languages. Arrow keys rotate, plus and minus zoom, or use the search field to find a language."
+        }
+        onKeyDown={
+          decorative
+            ? undefined
+            : (e) => {
+                const step = e.shiftKey ? 0.3 : 0.12;
+                const zoom = e.shiftKey ? 3 : 1.5;
+                if (e.key === "ArrowLeft") {
+                  apiRef.current?.nudge(-step, 0, 0);
+                } else if (e.key === "ArrowRight") {
+                  apiRef.current?.nudge(step, 0, 0);
+                } else if (e.key === "ArrowUp") {
+                  apiRef.current?.nudge(0, -step * 0.6, 0);
+                } else if (e.key === "ArrowDown") {
+                  apiRef.current?.nudge(0, step * 0.6, 0);
+                } else if (e.key === "+" || e.key === "=") {
+                  apiRef.current?.nudge(0, 0, -zoom);
+                } else if (e.key === "-" || e.key === "_") {
+                  apiRef.current?.nudge(0, 0, zoom);
+                } else {
+                  return;
+                }
+                e.preventDefault();
+              }
+        }
+      />
 
       {/* search */}
       {!decorative && (

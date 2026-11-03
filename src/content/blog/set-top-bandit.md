@@ -8,6 +8,10 @@ pubDate: 2026-11-03
 
 One story today: Google has dismantled a botnet of more than 1.3 million Android TV boxes that were apparently born this way. Facts from Google's threat report, BleepingComputer and Trend Micro; the tiny ski masks are mine.
 
+![A worried cartoon elephant in a hoodie on a couch, staring at a small TV streaming box wearing a tiny ski mask, with three more masked boxes lined up behind it](/blog/set-top-bandit-hero.webp)
+
+*Illustration generated for this post. The elephant is fine. The box insists it is also fine.*
+
 Google has just shut down a crime ring of more than 1.3 million Android TV boxes across 200 countries, and the twist is that none of the boxes knew they were in a gang, because they are boxes. Google's investigators say the malware was not caught from the internet - it came with the box, baked into the firmware at the factory - and Google assesses, with high confidence, that the manufacturer put it there on purpose. You did not get a virus. You bought one. It was in the box. The box was the virus.
 
 The business model, as Google tells it, is genuinely impressive in the worst way. Videostrong did not just sell you a streaming box; according to Google's report, it rented your box to criminal affiliates, who used it to click ads, resell your internet connection to strangers, and install more malware, like a flatmate who sublets your sofa while you sleep. And if you somehow found the malware and deleted it, it reinstalled itself from a hidden partition the moment you rebooted, which is less a flatmate and more a horror film.

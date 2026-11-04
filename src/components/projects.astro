@@ -3,10 +3,11 @@ import { Image } from "astro:assets";
 
 interface Project {
   title: string;
-  image: ImageMetadata | string;
+  image?: ImageMetadata | string;
   link: string;
   preview?: string;
-  status: string;
+  status?: string;
+  ctaLabel?: string;
   description?: string;
 }
 
@@ -19,6 +20,13 @@ const projects: Project[] = [
     description:
       "My side project where I am spending my tokens: a native code editor written in Rust (a Lapce derivative) with AI chat and reviewed edits built in.",
   },
+  {
+    title: "Chief",
+    link: "https://chief.izdrail.com",
+    ctaLabel: "View Chief",
+    description:
+      "A project workspace for planning development tasks and working with an AI coding agent.",
+  },
 ];
 ---
 
@@ -26,11 +34,11 @@ const projects: Project[] = [
   id="projects"
   class="py-12 border-t border-[#ffffff10] text-[var(--white)]"
 >
-  <div class="max-w-5xl mx-auto px-4">
+  <div class="max-w-5xl mx-auto">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My works</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8">Projects</h3>
 
-    <div class="grid grid-cols-1 gap-8 md:max-w-4xl md:mx-auto">
+    <div class="grid grid-cols-1 gap-8">
       {
         projects.map((project) => (
           <div class="group rounded-2xl border border-[var(--white-icon-tr)] bg-[var(--card)] overflow-hidden hover:border-[var(--sec)]/50 transition-colors duration-300">
@@ -41,7 +49,11 @@ const projects: Project[] = [
                 rel="noopener noreferrer"
                 class="block md:w-2/5 shrink-0 overflow-hidden"
               >
-                {typeof project.image === "string" ? (
+                {!project.image ? (
+                  <div aria-hidden="true" class="h-52 md:h-full min-h-52 flex items-center justify-center bg-gradient-to-br from-violet-950/60 to-slate-950 text-4xl font-medium text-violet-300">
+                    Chief
+                  </div>
+                ) : typeof project.image === "string" ? (
                   <img
                     src={project.image}
                     alt={project.title}
@@ -63,18 +75,19 @@ const projects: Project[] = [
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
                     <h4 class="text-2xl font-semibold mb-1">{project.title}</h4>
-                    <span class="block text-sm text-[var(--sec)] mb-3">
+                    {project.status && <span class="block text-sm text-[var(--sec)] mb-3">
                       {project.status}
-                    </span>
+                    </span>}
                   </div>
                   <div class="flex gap-2 shrink-0">
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
                       href={project.link}
-                      aria-label={`View ${project.title} on GitHub`}
-                      class="size-11 flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#ffffff08] hover:bg-[var(--white-icon-tr)]"
+                      aria-label={project.ctaLabel ?? `View ${project.title} on GitHub`}
+                      class={`${project.ctaLabel ? "px-4 h-11 gap-2" : "size-11 p-3"} flex justify-center items-center text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-[var(--white-icon-tr)] rounded-xl bg-[#ffffff08] hover:bg-[var(--white-icon-tr)]`}
                     >
+                      {project.ctaLabel && <span class="text-sm">{project.ctaLabel}</span>}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"

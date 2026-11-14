@@ -18,15 +18,16 @@ test("no global touch-action suppression anywhere in styles or components", () =
   assert.equal(out.trim(), "");
 });
 
-test("letter/brain backdrop stays scoped to the language-universe section", () => {
+test("page backdrop is gone and the home brain box runs the full scene", () => {
   const out = execSync(
-    'grep -rln "PageBackdrop" src/ | sort',
+    'grep -rln "PageBackdrop" src/ || true',
     { encoding: "utf8" },
-  ).trim().split("\n").sort();
-  assert.deepEqual(out, [
-    "src/React/PageBackdrop.tsx",
-    "src/components/languageUniverse.astro",
-  ]);
+  ).trim();
+  assert.equal(out, "");
+  const home = read("src/components/home.astro");
+  assert.match(home, /<LanguageUniverse client:load \/>/);
+  const index = read("src/pages/index.astro");
+  assert.doesNotMatch(index, /languageUniverse/);
 });
 
 test("letter-glitch canvas honors prefers-reduced-motion", () => {

@@ -91,10 +91,10 @@ import SkillsList from "../React/SkillsList.tsx";
 
     <LogoWall />
 
-    <div class="flex flex-col lg:flex-row items-start gap-8">
+    <div class="flex flex-col lg:flex-row items-stretch gap-8">
       <SkillsList client:load />
       <div
-        class="w-full lg:flex-1 h-[290px] md:h-[340px] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
+        class="w-full lg:flex-1 h-[290px] md:h-[340px] lg:h-auto rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
       >
         <LanguageUniverse client:load decorative initialRotY={0.6} />
       </div>

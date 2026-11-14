@@ -1,5 +1,5 @@
 ---
-import LetterGlitch from "../React/LetterGlitch.tsx";
+import LanguageUniverse from "../React/LanguageUniverse.tsx";
 import LogoWall from "../components/logoWall.astro";
 import SkillsList from "../React/SkillsList.tsx";
 ---
@@ -96,14 +96,7 @@ import SkillsList from "../React/SkillsList.tsx";
       <div
         class="w-full lg:flex-1 h-[290px] md:h-[340px] rounded-2xl border border-[var(--white-icon-tr)] bg-[#0a1020] overflow-hidden"
       >
-        <LetterGlitch
-          client:load
-          glitchColors={["#5e4491", "#A476FF", "#241a38"]}
-          glitchSpeed={33}
-          centerVignette={false}
-          outerVignette={true}
-          smooth={true}
-        />
+        <LanguageUniverse client:load decorative initialRotY={0.6} />
       </div>
     </div>
   </div>

@@ -19,13 +19,19 @@ const { Content } = await render(post);
 
 const postingSchema = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
+  "@type": "NewsArticle",
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
+  dateModified: post.data.pubDate.toISOString(),
   author: {
     "@type": "Person",
     name: "Software Developer",
+    url: "https://izdrail.com",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Stefan's Blog",
     url: "https://izdrail.com",
   },
   mainEntityOfPage: {
